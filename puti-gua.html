@@ -1,0 +1,1846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>菩提卦馆 · 古法算卦</title>
+<style>
+/* ========== 完整样式（与你原版一致） ========== */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap');
+
+:root {
+  --ink: #1a1208;
+  --ink2: #2d2010;
+  --ink3: #3d2e18;
+  --gold: #c8962a;
+  --gold2: #e8b84a;
+  --gold3: #f5d070;
+  --red: #8b1a1a;
+  --red2: #b52020;
+  --paper: #f5edd8;
+  --paper2: #efe4c8;
+  --paper3: #e8d8b0;
+  --smoke: #f9f4e8;
+  --text: #2a1e0a;
+  --text2: #5a4020;
+  --text3: #8a6830;
+  --border: rgba(139,96,40,0.25);
+  --shadow: rgba(26,12,0,0.15);
+  --glow: rgba(200,150,42,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Noto Serif SC', 'STSong', '宋体', serif;
+  background: var(--ink);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,96,42,0.08) 0%, transparent 70%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Ccircle cx='30' cy='30' r='0.5' fill='rgba(200,150,42,0.08)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(26,18,8,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(200,150,42,0.2);
+  padding: 0 40px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.header-logo .logo-seal {
+  width: 36px; height: 36px;
+  border: 1.5px solid var(--gold);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  color: var(--gold2);
+  transform: rotate(0deg);
+  transition: transform .4s;
+}
+.header-logo:hover .logo-seal { transform: rotate(15deg); }
+.header-logo h1 { font-size: 18px; color: var(--gold2); font-weight: 600; letter-spacing: .1em; }
+
+nav.main-nav { display: flex; gap: 8px; }
+.nav-link {
+  padding: 6px 16px;
+  font-size: 13px;
+  color: rgba(200,150,42,0.7);
+  text-decoration: none;
+  border-radius: 2px;
+  transition: all .2s;
+  letter-spacing: .05em;
+  cursor: pointer;
+}
+.nav-link:hover, .nav-link.active { color: var(--gold2); }
+
+.api-key-btn {
+  padding: 7px 18px;
+  border: 1px solid rgba(200,150,42,0.4);
+  border-radius: 3px;
+  color: var(--gold);
+  font-size: 12px;
+  cursor: pointer;
+  background: transparent;
+  font-family: inherit;
+  transition: all .2s;
+  letter-spacing: .05em;
+}
+.api-key-btn:hover { background: rgba(200,150,42,0.1); border-color: var(--gold2); color: var(--gold2); }
+
+main {
+  position: relative;
+  z-index: 1;
+  padding-top: 64px;
+}
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+#screen-home {
+  min-height: 100vh;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+}
+#screen-home.active { display: flex; }
+
+.hero {
+  width: 100%;
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px 80px;
+  position: relative;
+}
+
+.hero-bg-gua {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+.gua-circle {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(200,150,42,0.06);
+  animation: rotateSlow linear infinite;
+}
+.gua-circle:nth-child(1) { width:500px;height:500px; animation-duration: 120s; }
+.gua-circle:nth-child(2) { width:700px;height:700px; animation-duration: 180s; animation-direction: reverse; }
+.gua-circle:nth-child(3) { width:900px;height:900px; animation-duration: 240s; border-color: rgba(200,150,42,0.04); }
+
+.gua-symbols {
+  position: absolute;
+  width: 440px; height: 440px;
+  animation: rotateSlow 120s linear infinite;
+}
+.gua-sym {
+  position: absolute;
+  font-size: 22px;
+  color: rgba(200,150,42,0.12);
+  transform-origin: 220px 220px;
+  font-family: serif;
+}
+
+@keyframes rotateSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: .4em;
+  color: var(--gold);
+  opacity: .7;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-size: clamp(42px, 7vw, 80px);
+  font-weight: 700;
+  color: var(--paper);
+  line-height: 1.1;
+  letter-spacing: .08em;
+  text-align: center;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.hero-title .gold-char {
+  color: var(--gold2);
+  position: relative;
+}
+.hero-title .gold-char::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.hero-subtitle {
+  font-size: 15px;
+  color: rgba(245,237,216,0.5);
+  letter-spacing: .15em;
+  margin-bottom: 48px;
+  text-align: center;
+  font-weight: 300;
+}
+
+.gua-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 720px;
+  width: 100%;
+  margin-bottom: 48px;
+}
+
+.gua-card {
+  background: rgba(245,237,216,0.04);
+  border: 1px solid rgba(200,150,42,0.2);
+  border-radius: 4px;
+  padding: 24px 16px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+}
+.gua-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(200,150,42,0.08) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity .25s;
+}
+.gua-card:hover {
+  border-color: rgba(200,150,42,0.6);
+  background: rgba(245,237,216,0.07);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(200,150,42,0.12);
+}
+.gua-card:hover::before { opacity: 1; }
+
+.gua-card-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+.gua-card-name { font-size: 15px; color: var(--gold2); font-weight: 600; margin-bottom: 4px; letter-spacing: .08em; }
+.gua-card-desc { font-size: 11px; color: rgba(245,237,216,0.4); letter-spacing: .05em; }
+.gua-card-tag {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  border: 1px solid rgba(139,26,26,0.5);
+  color: rgba(181,32,32,0.8);
+  border-radius: 2px;
+  margin-top: 6px;
+}
+.gua-card-tag.free { border-color: rgba(200,150,42,0.4); color: var(--gold); }
+
+.hero-quote {
+  font-size: 13px;
+  color: rgba(245,237,216,0.3);
+  letter-spacing: .12em;
+  font-weight: 300;
+  text-align: center;
+}
+.hero-quote em { color: rgba(200,150,42,0.5); font-style: normal; }
+
+#screen-divine {
+  min-height: 100vh;
+  display: none;
+}
+#screen-divine.active { display: block; }
+
+.divine-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.divine-sidebar {
+  position: sticky;
+  top: 84px;
+}
+
+.divine-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid rgba(200,150,42,0.3);
+  border-radius: 3px;
+  font-size: 12px;
+  color: var(--gold);
+  margin-bottom: 20px;
+  letter-spacing: .08em;
+}
+
+.divine-title-block {
+  margin-bottom: 24px;
+}
+.divine-main-title {
+  font-size: 28px;
+  color: var(--paper);
+  font-weight: 700;
+  letter-spacing: .1em;
+  margin-bottom: 6px;
+}
+.divine-desc {
+  font-size: 13px;
+  color: rgba(245,237,216,0.45);
+  line-height: 1.8;
+  letter-spacing: .04em;
+}
+
+.coins-area {
+  background: rgba(245,237,216,0.03);
+  border: 1px solid rgba(200,150,42,0.15);
+  border-radius: 6px;
+  padding: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.coins-area-label {
+  font-size: 11px;
+  color: rgba(200,150,42,0.5);
+  letter-spacing: .15em;
+  margin-bottom: 16px;
+}
+.coins-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.coin {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(200,150,42,0.4);
+  background: rgba(200,150,42,0.06);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  color: var(--gold);
+  transition: all .3s;
+  cursor: default;
+}
+.coin.heads { background: rgba(200,150,42,0.15); color: var(--gold2); border-color: var(--gold); }
+.coin.tails { background: rgba(139,26,26,0.15); color: #c04040; border-color: #8b3030; }
+.coin.spinning {
+  animation: coinSpin .4s ease-in-out;
+}
+@keyframes coinSpin {
+  0% { transform: rotateY(0); }
+  50% { transform: rotateY(90deg) scale(0.8); }
+  100% { transform: rotateY(0); }
+}
+
+.gua-lines {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 6px;
+  margin: 16px auto;
+  width: 80px;
+}
+.gua-line {
+  height: 8px;
+  border-radius: 2px;
+  background: rgba(200,150,42,0.2);
+  transition: all .4s;
+  position: relative;
+}
+.gua-line.yang { background: var(--gold); }
+.gua-line.yin {
+  background: transparent;
+  display: flex;
+  gap: 6px;
+}
+.gua-line.yin::before, .gua-line.yin::after {
+  content: '';
+  flex: 1;
+  height: 100%;
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+.shake-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(139,26,26,0.8), rgba(180,30,30,0.9));
+  border: 1px solid rgba(180,30,30,0.6);
+  border-radius: 4px;
+  color: var(--paper);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: .1em;
+  transition: all .25s;
+  margin-top: 4px;
+}
+.shake-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(160,30,30,0.9), rgba(200,40,40,1));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(180,30,30,0.3);
+}
+.shake-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+.gua-result-mini {
+  background: rgba(245,237,216,0.04);
+  border: 1px solid rgba(200,150,42,0.2);
+  border-radius: 4px;
+  padding: 14px;
+  font-size: 12px;
+  color: rgba(245,237,216,0.5);
+  text-align: center;
+  letter-spacing: .05em;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gua-result-mini.has-result {
+  color: var(--gold2);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.divine-chat-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.chat-header {
+  padding: 20px 24px;
+  border: 1px solid rgba(200,150,42,0.15);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: rgba(245,237,216,0.03);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.chat-header-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; box-shadow: 0 0 6px var(--gold); }
+  50% { opacity:.5; box-shadow: 0 0 12px var(--gold2); }
+}
+.chat-header-name { font-size: 14px; color: var(--paper); letter-spacing: .08em; }
+.chat-header-sub { font-size: 11px; color: rgba(245,237,216,0.35); margin-left: auto; letter-spacing: .05em; }
+
+.chat-messages {
+  border: 1px solid rgba(200,150,42,0.15);
+  border-top: none;
+  border-bottom: none;
+  min-height: 420px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(26,18,8,0.5);
+  scroll-behavior: smooth;
+}
+.chat-messages::-webkit-scrollbar { width: 4px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: rgba(200,150,42,0.2); border-radius: 2px; }
+
+.msg { display: flex; gap: 12px; max-width: 100%; }
+.msg.user { flex-direction: row-reverse; }
+
+.msg-avatar {
+  width: 36px; height: 36px;
+  border-radius: 4px;
+  border: 1px solid rgba(200,150,42,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  background: rgba(200,150,42,0.06);
+}
+.msg.ai .msg-avatar { background: rgba(139,26,26,0.2); border-color: rgba(139,26,26,0.4); }
+
+.msg-bubble {
+  max-width: calc(100% - 56px);
+  padding: 14px 18px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.85;
+  letter-spacing: .03em;
+}
+.msg.user .msg-bubble {
+  background: rgba(200,150,42,0.1);
+  border: 1px solid rgba(200,150,42,0.2);
+  color: rgba(245,237,216,0.85);
+  border-radius: 4px 0 4px 4px;
+}
+.msg.ai .msg-bubble {
+  background: rgba(245,237,216,0.04);
+  border: 1px solid rgba(200,150,42,0.12);
+  color: rgba(245,237,216,0.82);
+  border-radius: 0 4px 4px 4px;
+  position: relative;
+}
+.msg.ai .msg-bubble::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: .3;
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 14px 18px;
+  background: rgba(245,237,216,0.04);
+  border: 1px solid rgba(200,150,42,0.12);
+  border-radius: 0 4px 4px 4px;
+  width: fit-content;
+}
+.typing-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: .4;
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes typingBounce {
+  0%,60%,100% { opacity:.4; transform: translateY(0); }
+  30% { opacity:1; transform: translateY(-4px); }
+}
+
+.welcome-msg {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(245,237,216,0.3);
+  font-size: 13px;
+  letter-spacing: .08em;
+  line-height: 2;
+}
+.welcome-msg .big-char {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
+  opacity: .4;
+}
+
+.chat-input-area {
+  border: 1px solid rgba(200,150,42,0.15);
+  border-top: 1px solid rgba(200,150,42,0.08);
+  border-radius: 0 0 6px 6px;
+  background: rgba(26,18,8,0.7);
+  padding: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.chat-input {
+  flex: 1;
+  background: rgba(245,237,216,0.05);
+  border: 1px solid rgba(200,150,42,0.2);
+  border-radius: 4px;
+  padding: 10px 14px;
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 13px;
+  resize: none;
+  outline: none;
+  line-height: 1.6;
+  max-height: 120px;
+  letter-spacing: .03em;
+  transition: border-color .2s;
+}
+.chat-input:focus { border-color: rgba(200,150,42,0.5); }
+.chat-input::placeholder { color: rgba(245,237,216,0.2); }
+
+.send-btn {
+  width: 42px; height: 42px;
+  background: linear-gradient(135deg, #7a1515, #a01a1a);
+  border: 1px solid rgba(160,26,26,0.6);
+  border-radius: 4px;
+  color: var(--paper);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.send-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #a01a1a, #c02020);
+  box-shadow: 0 4px 12px rgba(160,26,26,0.4);
+}
+.send-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+.quick-questions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 16px 4px;
+  border-left: 1px solid rgba(200,150,42,0.15);
+  border-right: 1px solid rgba(200,150,42,0.15);
+  background: rgba(26,18,8,0.4);
+}
+.quick-q {
+  padding: 4px 12px;
+  border: 1px solid rgba(200,150,42,0.18);
+  border-radius: 20px;
+  font-size: 11px;
+  color: rgba(200,150,42,0.6);
+  cursor: pointer;
+  font-family: inherit;
+  background: transparent;
+  transition: all .2s;
+  letter-spacing: .04em;
+}
+.quick-q:hover { border-color: rgba(200,150,42,0.5); color: var(--gold2); background: rgba(200,150,42,0.06); }
+
+#screen-about {
+  min-height: 100vh;
+}
+.about-wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 60px 24px 100px;
+}
+.about-section {
+  margin-bottom: 56px;
+}
+.section-eyebrow {
+  font-size: 10px;
+  letter-spacing: .4em;
+  color: var(--gold);
+  opacity: .6;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.section-title {
+  font-size: 26px;
+  color: var(--paper);
+  font-weight: 600;
+  letter-spacing: .08em;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(200,150,42,0.15);
+}
+.about-text {
+  font-size: 14px;
+  color: rgba(245,237,216,0.55);
+  line-height: 2.2;
+  letter-spacing: .04em;
+}
+.about-text strong { color: var(--gold); font-weight: 400; }
+
+.classics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+}
+.classic-card {
+  padding: 18px 16px;
+  border: 1px solid rgba(200,150,42,0.15);
+  border-radius: 4px;
+  background: rgba(245,237,216,0.02);
+  transition: all .2s;
+}
+.classic-card:hover { border-color: rgba(200,150,42,0.35); }
+.classic-card .c-icon { font-size: 22px; margin-bottom: 8px; }
+.classic-card .c-name { font-size: 13px; color: var(--gold2); margin-bottom: 4px; letter-spacing: .06em; }
+.classic-card .c-desc { font-size: 11px; color: rgba(245,237,216,0.3); line-height: 1.6; }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(6px);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #1e1608;
+  border: 1px solid rgba(200,150,42,0.3);
+  border-radius: 6px;
+  padding: 36px;
+  width: 460px;
+  max-width: 90vw;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+}
+.modal-title {
+  font-size: 18px;
+  color: var(--gold2);
+  margin-bottom: 8px;
+  letter-spacing: .08em;
+}
+.modal-desc {
+  font-size: 13px;
+  color: rgba(245,237,216,0.4);
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+.modal-desc a { color: var(--gold); text-decoration: none; }
+.modal-desc a:hover { text-decoration: underline; }
+.modal-input {
+  width: 100%;
+  background: rgba(245,237,216,0.05);
+  border: 1px solid rgba(200,150,42,0.25);
+  border-radius: 4px;
+  padding: 11px 14px;
+  color: var(--paper);
+  font-family: monospace;
+  font-size: 13px;
+  outline: none;
+  margin-bottom: 16px;
+  letter-spacing: .04em;
+}
+.modal-input:focus { border-color: rgba(200,150,42,0.5); }
+.modal-input::placeholder { color: rgba(245,237,216,0.2); font-family: inherit; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.modal-cancel {
+  padding: 9px 22px;
+  background: transparent;
+  border: 1px solid rgba(245,237,216,0.15);
+  border-radius: 3px;
+  color: rgba(245,237,216,0.5);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.modal-cancel:hover { border-color: rgba(245,237,216,0.3); color: var(--paper); }
+.modal-save {
+  padding: 9px 22px;
+  background: linear-gradient(135deg, rgba(200,150,42,0.8), rgba(220,170,52,0.9));
+  border: none;
+  border-radius: 3px;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: .05em;
+}
+.modal-save:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(200,150,42,0.3); }
+
+.toast {
+  position: fixed;
+  bottom: 32px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: rgba(30,22,8,0.95);
+  border: 1px solid rgba(200,150,42,0.3);
+  color: var(--gold2);
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 13px;
+  z-index: 600;
+  opacity: 0;
+  transition: all .3s;
+  letter-spacing: .05em;
+  white-space: nowrap;
+}
+.toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,150,42,0.2), transparent);
+  margin: 48px 0;
+}
+
+@media (max-width: 768px) {
+  header { padding: 0 16px; }
+  nav.main-nav { display: none; }
+  .hero-title { font-size: 40px; }
+  .gua-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .divine-layout { grid-template-columns: 1fr; }
+  .divine-sidebar { position: static; }
+  .classics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.msg-bubble p { margin-bottom: .8em; }
+.msg-bubble p:last-child { margin-bottom: 0; }
+.msg-bubble strong { color: var(--gold2); font-weight: 600; }
+.msg-bubble em { color: rgba(245,237,216,0.6); font-style: normal; border-bottom: 1px dashed rgba(200,150,42,0.3); }
+
+/* 剩余次数显示 */
+.points-display {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  background: #2a1e0a;
+  border: 1px solid #c8962a;
+  padding: 8px 16px;
+  border-radius: 4px;
+  color: #e8b84a;
+  z-index: 99;
+  font-size: 14px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.points-display:hover { background: #3d2e18; }
+
+/* 付费弹窗 */
+.pay-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pay-modal-box {
+  background: #1e1608;
+  border: 1px solid #c8962a;
+  border-radius: 12px;
+  padding: 32px;
+  width: 380px;
+  max-width: 90vw;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.pay-modal-title {
+  font-size: 22px;
+  color: #e8b84a;
+  margin-bottom: 8px;
+}
+.pay-modal-sub {
+  font-size: 13px;
+  color: rgba(245,237,216,0.4);
+  margin-bottom: 24px;
+}
+.pay-option {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #8b1a1a, #a01a1a);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.pay-option:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(139,26,26,0.4); }
+.pay-qr {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+.pay-qr img { width: 200px; height: 200px; }
+.pay-contact {
+  font-size: 12px;
+  color: #c8962a;
+  margin-top: 16px;
+  cursor: pointer;
+}
+.pay-contact:hover { text-decoration: underline; }
+.pay-close {
+  margin-top: 16px;
+  background: transparent;
+  border: 1px solid rgba(200,150,42,0.4);
+  border-radius: 4px;
+  color: #c8962a;
+  padding: 8px 20px;
+  cursor: pointer;
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header>
+  <div class="header-logo" onclick="showScreen('home')">
+    <div class="logo-seal">☯</div>
+    <h1>菩提卦馆</h1>
+  </div>
+  <nav class="main-nav">
+    <span class="nav-link active" onclick="showScreen('home')">首页</span>
+    <span class="nav-link" onclick="startDivine('六爻占卜','liuyao')">六爻占卜</span>
+    <span class="nav-link" onclick="startDivine('周公解梦','dream')">周公解梦</span>
+    <span class="nav-link" onclick="startDivine('关帝灵签','qian')">关帝灵签</span>
+    <span class="nav-link" onclick="startDivine('八字命盘','bazi')">八字命盘</span>
+    <span class="nav-link" onclick="startDivine('姓名测算','name')">姓名测算</span>
+    <span class="nav-link" onclick="startDivine('风水问答','fengshui')">风水问答</span>
+    <span class="nav-link" onclick="showScreen('about')">关于</span>
+  </nav>
+  <button class="api-key-btn" style="display:none" aria-hidden="true">AI 已由后端接入</button>
+</header>
+
+<main>
+
+  <!-- ══ 首页 ══ -->
+  <div id="screen-home" class="screen active">
+    <div class="hero">
+      <div class="hero-bg-gua">
+        <div class="gua-circle"></div>
+        <div class="gua-circle"></div>
+        <div class="gua-circle"></div>
+        <div class="gua-symbols" id="gua-symbols"></div>
+      </div>
+      <p class="hero-eyebrow">古法 · 问卦 · 解惑</p>
+      <h2 class="hero-title"><span class="gold-char">菩</span>提<span class="gold-char">卦</span>馆</h2>
+      <p class="hero-subtitle">蒸古籍于 AI · 问天地之玄机</p>
+      <div class="gua-grid">
+        <div class="gua-card" onclick="startDivine('六爻占卜','liuyao')"><span class="gua-card-icon">☯</span><div class="gua-card-name">六爻占卜</div><div class="gua-card-desc">摇三枚铜钱，起六爻卦象</div><span class="gua-card-tag">最灵验</span></div>
+        <div class="gua-card" onclick="startDivine('周公解梦','dream')"><span class="gua-card-icon">🌙</span><div class="gua-card-name">周公解梦</div><div class="gua-card-desc">描述梦境，探寻吉凶征兆</div><span class="gua-card-tag free">免摇卦</span></div>
+        <div class="gua-card" onclick="startDivine('关帝灵签','qian')"><span class="gua-card-icon">🏮</span><div class="gua-card-name">关帝灵签</div><div class="gua-card-desc">百签解惑，忠义护佑</div><span class="gua-card-tag">签到即灵</span></div>
+        <div class="gua-card" onclick="startDivine('八字命盘','bazi')"><span class="gua-card-icon">📿</span><div class="gua-card-name">八字命盘</div><div class="gua-card-desc">生辰八字，推算命运格局</div><span class="gua-card-tag">需生辰</span></div>
+        <div class="gua-card" onclick="startDivine('姓名测算','name')"><span class="gua-card-icon">🖊️</span><div class="gua-card-name">姓名测算</div><div class="gua-card-desc">五格数理，测名字吉凶</div><span class="gua-card-tag free">免摇卦</span></div>
+        <div class="gua-card" onclick="startDivine('风水问答','fengshui')"><span class="gua-card-icon">🗻</span><div class="gua-card-name">风水问答</div><div class="gua-card-desc">居家方位，趋吉避凶之道</div><span class="gua-card-tag free">直接问</span></div>
+      </div>
+      <p class="hero-quote"><em>「</em> 善易者不卜，善卜者不疑 <em>」</em></p>
+    </div>
+  </div>
+
+  <!-- ══ 占卜页 ══ -->
+  <div id="screen-divine" class="screen">
+    <div class="divine-layout">
+      <div class="divine-sidebar">
+        <div class="divine-type-badge"><span id="divine-icon-badge">☯</span><span id="divine-type-name">六爻占卜</span></div>
+        <div class="divine-title-block"><div class="divine-main-title" id="divine-main-title">起卦问事</div><div class="divine-desc" id="divine-desc">以三枚铜钱摇六次，得六爻之象。心存所问之事，诚心摇卦，方可得准。</div></div>
+        <div class="coins-area" id="coins-area"><div class="coins-area-label">摇 卦</div><div class="coins-row" id="coins-row"><div class="coin" id="coin0">○</div><div class="coin" id="coin1">○</div><div class="coin" id="coin2">○</div></div><div class="gua-lines" id="gua-lines"><div class="gua-line" id="gl0"></div><div class="gua-line" id="gl1"></div><div class="gua-line" id="gl2"></div><div class="gua-line" id="gl3"></div><div class="gua-line" id="gl4"></div><div class="gua-line" id="gl5"></div></div><div class="gua-result-mini" id="gua-result-mini">请摇卦起象</div><button class="shake-btn" id="shake-btn" onclick="shakeCoin()">🪙 摇 卦</button></div>
+        <div style="font-size:12px;color:rgba(245,237,216,0.25);line-height:1.9;letter-spacing:.04em;padding:0 2px;" id="sidebar-tips">摇卦完成后，在右侧输入框描述您所问之事，大师将为您详细解卦。</div>
+        <div style="margin-top:20px;"><span style="font-size:12px;color:rgba(200,150,42,0.4);cursor:pointer;letter-spacing:.06em;" onclick="showScreen('home')">← 返回首页</span></div>
+      </div>
+      <div class="divine-chat-area">
+        <div class="chat-header"><div class="chat-header-dot"></div><span class="chat-header-name">玄鉴先生 · 在线问卦</span><span class="chat-header-sub">由 DeepSeek 大模型驱动 · 古籍蒸馏</span></div>
+        <div class="quick-questions" id="quick-questions"></div>
+        <div class="chat-messages" id="chat-messages"><div class="welcome-msg" id="welcome-msg"><span class="big-char">☯</span>请先摇卦起象，<br>而后描述所问之事，<br>大师将为您解卦指点迷津。</div></div>
+        <div class="chat-input-area"><textarea class="chat-input" id="chat-input" placeholder="描述您想问的事，或直接提问……" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea><button class="send-btn" id="send-btn" onclick="sendMessage()">➤</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 关于页 ══ -->
+  <div id="screen-about" class="screen">
+    <div class="about-wrap">
+      <div class="about-section"><div class="section-eyebrow">关于菩提卦馆</div><div class="section-title">古籍蒸馏，AI 问卦</div><p class="about-text">菩提卦馆以<strong>《周易》《增删卜易》《卜筮正宗》《周公解梦》《关帝灵签》《三命通会》《姓名学全书》《阳宅三要》</strong>等数十部古典术数典籍为根基，借助 DeepSeek 大模型的深度学习能力，将千年古法融入现代对话之中。<br><br>这里没有模糊的套话，每一次问卦都基于真实的古籍原文。无论是<strong>六爻占卜、周公解梦、关帝灵签</strong>，还是<strong>八字命盘、姓名测算、风水问答</strong>，玄鉴先生皆能旁征博引，为您指点吉凶。</p></div>
+      <div class="divider"></div>
+      <div class="about-section"><div class="section-eyebrow">典籍基础</div><div class="section-title">蒸馏自古籍</div><div class="classics-grid"><div class="classic-card"><div class="c-icon">📜</div><div class="c-name">周易 · 易经</div><div class="c-desc">六十四卦，三百八十四爻</div></div><div class="classic-card"><div class="c-icon">📖</div><div class="c-name">增删卜易</div><div class="c-desc">六爻断卦第一参考</div></div><div class="classic-card"><div class="c-icon">🔮</div><div class="c-name">卜筮正宗</div><div class="c-desc">六爻入门经典</div></div><div class="classic-card"><div class="c-icon">🌙</div><div class="c-name">周公解梦</div><div class="c-desc">梦境解析古典</div></div><div class="classic-card"><div class="c-icon">🏮</div><div class="c-name">关帝灵签</div><div class="c-desc">百签解惑</div></div><div class="classic-card"><div class="c-icon">⭐</div><div class="c-name">三命通会</div><div class="c-desc">八字命理集大成</div></div><div class="classic-card"><div class="c-icon">🖊️</div><div class="c-name">姓名学全书</div><div class="c-desc">五格数理吉凶</div></div><div class="classic-card"><div class="c-icon">🏔️</div><div class="c-name">阳宅三要</div><div class="c-desc">风水阳宅经典</div></div></div></div>
+      <div class="divider"></div>
+      <div class="about-section"><div class="section-eyebrow">免责声明</div><div class="section-title">仅供参考</div><p class="about-text">本网站所有占卜、解梦、命理内容均由 AI 生成，基于古籍典故进行推演解读，<strong>仅供娱乐参考</strong>，不构成任何形式的专业建议。请勿将占卜结果作为重大人生决策的唯一依据。</p></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- API Key 弹窗 -->
+<div class="modal-overlay" id="api-modal">
+  <div class="modal-box">
+    <div class="modal-title">AI 已由后端接入</div>
+    <div class="modal-desc">DeepSeek API Key 已移到后端 <code>.env</code> 文件中，网页不再保存密钥。上线前请在服务器后台配置真实 Key。</div>
+    <input class="modal-input" id="api-key-input" type="password" placeholder="无需在网页填写" disabled>
+    <div id="api-key-status" style="font-size:12px;color:rgba(245,237,216,0.35);margin-bottom:14px;min-height:18px;"></div>
+    <div class="modal-actions"><button class="modal-save" onclick="closeApiModal()">知道了</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// 1. 完整古籍数据库（方案A）
+// ═══════════════════════════════════════════════════════════
+
+// ===== 六十四卦完整数据库 =====
+const YIJING_64 = {
+  "111111": { name: "乾为天", judgment: "元，亨，利，贞。", image: "天行健，君子以自强不息。", lines: ["初九：潜龙勿用。","九二：见龙在田，利见大人。","九三：君子终日乾乾，夕惕若厉，无咎。","九四：或跃在渊，无咎。","九五：飞龙在天，利见大人。","上九：亢龙有悔。"], interpretation: "乾卦象征天，具有创始、通达、顺利、正固四种德性。得此卦者，刚健进取，大吉大利。" },
+  "000000": { name: "坤为地", judgment: "元亨，利牝马之贞。君子有攸往，先迷后得主，利西南得朋，东北丧朋。安贞吉。", image: "地势坤，君子以厚德载物。", lines: ["初六：履霜，坚冰至。","六二：直方大，不习无不利。","六三：含章可贞，或从王事，无成有终。","六四：括囊，无咎无誉。","六五：黄裳，元吉。","上六：龙战于野，其血玄黄。"], interpretation: "坤卦象征地，柔顺包容，承载万物。得此卦者，宜柔顺守成，不宜刚强冒进。" },
+  "100010": { name: "水雷屯", judgment: "元亨利贞。勿用有攸往，利建侯。", image: "云雷，屯。君子以经纶。", lines: ["初九：磐桓，利居贞，利建侯。","六二：屯如邅如，乘马班如。匪寇婚媾，女子贞不字，十年乃字。","六三：即鹿无虞，惟入于林中，君子几不如舍，往吝。","六四：乘马班如，求婚媾，往吉，无不利。","九五：屯其膏，小贞吉，大贞凶。","上六：乘马班如，泣血涟如。"], interpretation: "屯卦象征初生艰难，但充满生机。得此卦者，宜守正待时，不宜冒进。" },
+  "010001": { name: "山水蒙", judgment: "亨。匪我求童蒙，童蒙求我。初筮告，再三渎，渎则不告。利贞。", image: "山下出泉，蒙。君子以果行育德。", lines: ["初六：发蒙，利用刑人，用说桎梏，以往吝。","九二：包蒙吉，纳妇吉，子克家。","六三：勿用取女，见金夫，不有躬，无攸利。","六四：困蒙，吝。","六五：童蒙，吉。","上九：击蒙，不利为寇，利御寇。"], interpretation: "蒙卦象征启蒙教育。得此卦者，宜虚心求教，不宜自以为是。" },
+  "111010": { name: "水天需", judgment: "有孚，光亨，贞吉。利涉大川。", image: "云上于天，需。君子以饮食宴乐。", lines: ["初九：需于郊，利用恒，无咎。","九二：需于沙，小有言，终吉。","九三：需于泥，致寇至。","六四：需于血，出自穴。","九五：需于酒食，贞吉。","上六：入于穴，有不速之客三人来，敬之终吉。"], interpretation: "需卦象征等待时机。得此卦者，宜耐心等待，不可急躁冒进。" },
+  "010111": { name: "天水讼", judgment: "有孚窒惕，中吉，终凶。利见大人，不利涉大川。", image: "天与水违行，讼。君子以作事谋始。", lines: ["初六：不永所事，小有言，终吉。","九二：不克讼，归而逋，其邑人三百户，无眚。","六三：食旧德，贞厉，终吉，或从王事，无成。","九四：不克讼，复即命，渝安贞，吉。","九五：讼元吉。","上九：或锡之鞶带，终朝三褫之。"], interpretation: "讼卦象征争讼。得此卦者，宜和解避让，不宜争讼。" },
+  "010000": { name: "地水师", judgment: "贞，丈人吉，无咎。", image: "地中有水，师。君子以容民畜众。", lines: ["初六：师出以律，否臧凶。","九二：在师中，吉无咎，王三锡命。","六三：师或舆尸，凶。","六四：师左次，无咎。","六五：田有禽，利执言，无咎。长子帅师，弟子舆尸，贞凶。","上六：大君有命，开国承家，小人勿用。"], interpretation: "师卦象征统军作战。得此卦者，宜任人唯贤，不宜轻举妄动。" },
+  "000010": { name: "水地比", judgment: "吉。原筮元永贞，无咎。不宁方来，后夫凶。", image: "地上有水，比。先王以建万国，亲诸侯。", lines: ["初六：有孚比之，无咎。有孚盈缶，终来有他，吉。","六二：比之自内，贞吉。","六三：比之匪人。","六四：外比之，贞吉。","九五：显比，王用三驱，失前禽。邑人不诫，吉。","上六：比之无首，凶。"], interpretation: "比卦象征亲附团结。得此卦者，宜广结善缘，不宜孤军奋战。" },
+  "111011": { name: "风天小畜", judgment: "亨。密云不雨，自我西郊。", image: "风行天上，小畜。君子以懿文德。", lines: ["初九：复自道，何其咎，吉。","九二：牵复，吉。","九三：舆说辐，夫妻反目。","六四：有孚，血去惕出，无咎。","九五：有孚挛如，富以其邻。","上九：既雨既处，尚德载，妇贞厉。月几望，君子征凶。"], interpretation: "小畜卦象征小有积蓄。得此卦者，宜积少成多，不宜急功近利。" },
+  "110111": { name: "天泽履", judgment: "履虎尾，不咥人，亨。", image: "上天下泽，履。君子以辨上下，定民志。", lines: ["初九：素履，往无咎。","九二：履道坦坦，幽人贞吉。","六三：眇能视，跛能履，履虎尾，咥人，凶。武人为于大君。","九四：履虎尾，愬愬终吉。","九五：夬履，贞厉。","上九：视履考祥，其旋元吉。"], interpretation: "履卦象征小心行事。得此卦者，宜谨慎履践，不宜轻率冒险。" },
+  "111000": { name: "地天泰", judgment: "小往大来，吉亨。", image: "天地交，泰。后以财成天地之道，辅相天地之宜，以左右民。", lines: ["初九：拔茅茹，以其夤，征吉。","九二：包荒，用冯河，不遐遗，朋亡，得尚于中行。","九三：无平不陂，无往不复，艰贞无咎。勿恤其孚，于食有福。","六四：翩翩，不富以其邻，不戒以孚。","六五：帝乙归妹，以祉元吉。","上六：城复于隍，勿用师。自邑告命，贞吝。"], interpretation: "泰卦象征通泰昌盛。得此卦者，万事亨通，大吉大利。" },
+  "000111": { name: "天地否", judgment: "否之匪人，不利君子贞，大往小来。", image: "天地不交，否。君子以俭德辟难，不可荣以禄。", lines: ["初六：拔茅茹，以其夤，贞吉亨。","六二：包承，小人吉，大人否亨。","六三：包羞。","九四：有命无咎，畴离祉。","九五：休否，大人吉。其亡其亡，系于苞桑。","上九：倾否，先否后喜。"], interpretation: "否卦象征闭塞不通。得此卦者，宜守正待时，不宜妄动。" },
+  "101111": { name: "天火同人", judgment: "同人于野，亨。利涉大川，利君子贞。", image: "天与火，同人。君子以类族辨物。", lines: ["初九：同人于门，无咎。","六二：同人于宗，吝。","九三：伏戎于莽，升其高陵，三岁不兴。","九四：乘其墉，弗克攻，吉。","九五：同人先号咷而后笑，大师克相遇。","上九：同人于郊，无悔。"], interpretation: "同人卦象征团结合作。得此卦者，宜广结人缘，不宜独断专行。" },
+  "111101": { name: "火天大有", judgment: "元亨。", image: "火在天上，大有。君子以遏恶扬善，顺天休命。", lines: ["初九：无交害，匪咎，艰则无咎。","九二：大车以载，有攸往，无咎。","九三：公用亨于天子，小人弗克。","九四：匪其彭，无咎。","六五：厥孚交如，威如，吉。","上九：自天佑之，吉无不利。"], interpretation: "大有卦象征富有丰足。得此卦者，诸事顺利，大吉大利。" },
+  "001000": { name: "地山谦", judgment: "亨，君子有终。", image: "地中有山，谦。君子以裒多益寡，称物平施。", lines: ["初六：谦谦君子，用涉大川，吉。","六二：鸣谦，贞吉。","九三：劳谦君子，有终吉。","六四：无不利，撝谦。","六五：不富以其邻，利用侵伐，无不利。","上六：鸣谦，利用行师，征邑国。"], interpretation: "谦卦象征谦虚退让。得此卦者，谦受益，满招损。" },
+  "000100": { name: "雷地豫", judgment: "利建侯行师。", image: "雷出地奋，豫。先王以作乐崇德，殷荐之上帝，以配祖考。", lines: ["初六：鸣豫，凶。","六二：介于石，不终日，贞吉。","六三：盱豫，悔。迟有悔。","九四：由豫，大有得。勿疑，朋盍簪。","六五：贞疾，恒不死。","上六：冥豫，成有渝，无咎。"], interpretation: "豫卦象征安乐和悦。得此卦者，宜居安思危，不宜放纵享乐。" },
+  "100110": { name: "泽雷随", judgment: "元亨利贞，无咎。", image: "泽中有雷，随。君子以向晦入宴息。", lines: ["初九：官有渝，贞吉。出门交有功。","六二：系小子，失丈夫。","六三：系丈夫，失小子。随有求得，利居贞。","九四：随有获，贞凶。有孚在道，以明，何咎。","九五：孚于嘉，吉。","上六：拘系之，乃从维之。王用亨于西山。"], interpretation: "随卦象征随从顺时。得此卦者，宜随遇而安，不宜固执己见。" },
+  "011001": { name: "山风蛊", judgment: "元亨，利涉大川。先甲三日，后甲三日。", image: "山下有风，蛊。君子以振民育德。", lines: ["初六：干父之蛊，有子，考无咎，厉终吉。","九二：干母之蛊，不可贞。","九三：干父之蛊，小有悔，无大咎。","六四：裕父之蛊，往见吝。","六五：干父之蛊，用誉。","上九：不事王侯，高尚其事。"], interpretation: "蛊卦象征整饬弊乱。得此卦者，宜革除积弊，不宜因循守旧。" },
+  "110000": { name: "地泽临", judgment: "元亨利贞。至于八月有凶。", image: "泽上有地，临。君子以教思无穷，容保民无疆。", lines: ["初九：咸临，贞吉。","九二：咸临，吉无不利。","六三：甘临，无攸利。既忧之，无咎。","六四：至临，无咎。","六五：知临，大君之宜，吉。","上六：敦临，吉无咎。"], interpretation: "临卦象征临近督导。得此卦者，宜亲临其事，不宜疏远。" },
+  "000011": { name: "风地观", judgment: "盥而不荐，有孚颙若。", image: "风行地上，观。先王以省方，观民设教。", lines: ["初六：童观，小人无咎，君子吝。","六二：窥观，利女贞。","六三：观我生，进退。","六四：观国之光，利用宾于王。","九五：观我生，君子无咎。","上九：观其生，君子无咎。"], interpretation: "观卦象征观察审视。得此卦者，宜审时度势，不宜轻举妄动。" },
+  "100101": { name: "火雷噬嗑", judgment: "亨，利用狱。", image: "雷电噬嗑，先王以明罚敕法。", lines: ["初九：屦校灭趾，无咎。","六二：噬肤灭鼻，无咎。","六三：噬腊肉，遇毒。小吝，无咎。","九四：噬干胏，得金矢，利艰贞，吉。","六五：噬干肉，得黄金，贞厉，无咎。","上九：何校灭耳，凶。"], interpretation: "噬嗑卦象征咬合刑罚。得此卦者，宜明断是非，不宜含糊。" },
+  "101001": { name: "山火贲", judgment: "亨。小利有攸往。", image: "山下有火，贲。君子以明庶政，无敢折狱。", lines: ["初九：贲其趾，舍车而徒。","六二：贲其须。","九三：贲如濡如，永贞吉。","六四：贲如皤如，白马翰如，匪寇婚媾。","六五：贲于丘园，束帛戋戋，吝，终吉。","上九：白贲，无咎。"], interpretation: "贲卦象征修饰文饰。得此卦者，宜内外兼修，不宜徒有其表。" },
+  "000001": { name: "山地剥", judgment: "不利有攸往。", image: "山附于地，剥。上以厚下安宅。", lines: ["初六：剥床以足，蔑贞凶。","六二：剥床以辨，蔑贞凶。","六三：剥之，无咎。","六四：剥床以肤，凶。","六五：贯鱼，以宫人宠，无不利。","上九：硕果不食，君子得舆，小人剥庐。"], interpretation: "剥卦象征剥落衰败。得此卦者，宜静守待变，不宜妄动。" },
+  "100000": { name: "地雷复", judgment: "亨。出入无疾，朋来无咎。反复其道，七日来复，利有攸往。", image: "雷在地中，复。先王以至日闭关，商旅不行，后不省方。", lines: ["初九：不远复，无祗悔，元吉。","六二：休复，吉。","六三：频复，厉无咎。","六四：中行独复。","六五：敦复，无悔。","上六：迷复，凶，有灾眚。用行师，终有大败，以其国君凶，至于十年不克征。"], interpretation: "复卦象征复归回返。得此卦者，宜改过自新，不宜执迷不悟。" },
+  "100111": { name: "天雷无妄", judgment: "元亨利贞。其匪正有眚，不利有攸往。", image: "天下雷行，物与无妄。先王以茂对时，育万物。", lines: ["初九：无妄，往吉。","六二：不耕获，不菑畲，则利有攸往。","六三：无妄之灾，或系之牛，行人之得，邑人之灾。","九四：可贞，无咎。","九五：无妄之疾，勿药有喜。","上九：无妄，行有眚，无攸利。"], interpretation: "无妄卦象征不妄为。得此卦者，宜顺其自然，不宜强求。" },
+  "111001": { name: "山天大畜", judgment: "利贞，不家食吉，利涉大川。", image: "天在山中，大畜。君子以多识前言往行，以畜其德。", lines: ["初九：有厉，利已。","九二：舆说輹。","九三：良马逐，利艰贞。曰闲舆卫，利有攸往。","六四：童牛之牿，元吉。","六五：豮豕之牙，吉。","上九：何天之衢，亨。"], interpretation: "大畜卦象征大积蓄。得此卦者，宜厚积薄发，不宜急于求成。" },
+  "100001": { name: "山雷颐", judgment: "贞吉。观颐，自求口实。", image: "山下有雷，颐。君子以慎言语，节饮食。", lines: ["初九：舍尔灵龟，观我朵颐，凶。","六二：颠颐，拂经，于丘颐，征凶。","六三：拂颐，贞凶，十年勿用，无攸利。","六四：颠颐吉，虎视眈眈，其欲逐逐，无咎。","六五：拂经，居贞吉，不可涉大川。","上九：由颐，厉吉，利涉大川。"], interpretation: "颐卦象征颐养之道。得此卦者，宜自食其力，不宜依赖他人。" },
+  "011110": { name: "泽风大过", judgment: "栋桡，利有攸往，亨。", image: "泽灭木，大过。君子以独立不惧，遁世无闷。", lines: ["初六：藉用白茅，无咎。","九二：枯杨生稊，老夫得其女妻，无不利。","九三：栋桡，凶。","九四：栋隆，吉。有它吝。","九五：枯杨生华，老妇得其士夫，无咎无誉。","上六：过涉灭顶，凶，无咎。"], interpretation: "大过卦象征过度。得此卦者，宜适可而止，不宜过分。" },
+  "010010": { name: "坎为水", judgment: "习坎，有孚，维心亨，行有尚。", image: "水洊至，习坎。君子以常德行，习教事。", lines: ["初六：习坎，入于坎窞，凶。","九二：坎有险，求小得。","六三：来之坎坎，险且枕，入于坎窞，勿用。","六四：樽酒簋贰，用缶，纳约自牖，终无咎。","九五：坎不盈，祗既平，无咎。","上六：系用徽纆，寘于丛棘，三岁不得，凶。"], interpretation: "坎卦象征险陷。得此卦者，宜谨慎前行，不宜莽撞。" },
+  "101101": { name: "离为火", judgment: "利贞，亨。畜牝牛，吉。", image: "明两作，离。大人以继明照于四方。", lines: ["初九：履错然，敬之无咎。","六二：黄离，元吉。","九三：日昃之离，不鼓缶而歌，则大耋之嗟，凶。","九四：突如其来如，焚如，死如，弃如。","六五：出涕沱若，戚嗟若，吉。","上九：王用出征，有嘉折首，获匪其丑，无咎。"], interpretation: "离卦象征光明依附。得此卦者，宜光明磊落，不宜阴暗。" },
+  "001110": { name: "泽山咸", judgment: "亨，利贞，取女吉。", image: "山上有泽，咸。君子以虚受人。", lines: ["初六：咸其拇。","六二：咸其腓，凶，居吉。","九三：咸其股，执其随，往吝。","九四：贞吉悔亡，憧憧往来，朋从尔思。","九五：咸其脢，无悔。","上六：咸其辅，颊，舌。"], interpretation: "咸卦象征感应。得此卦者，宜真诚相感，不宜虚情假意。" },
+  "011100": { name: "雷风恒", judgment: "亨，无咎，利贞，利有攸往。", image: "雷风，恒。君子以立不易方。", lines: ["初六：浚恒，贞凶，无攸利。","九二：悔亡。","九三：不恒其德，或承之羞，贞吝。","九四：田无禽。","六五：恒其德，贞。妇人吉，夫子凶。","上六：振恒，凶。"], interpretation: "恒卦象征恒久。得此卦者，宜持之以恒，不宜半途而废。" },
+  "001111": { name: "天山遁", judgment: "亨，小利贞。", image: "天下有山，遁。君子以远小人，不恶而严。", lines: ["初六：遁尾，厉，勿用有攸往。","六二：执之用黄牛之革，莫之胜说。","九三：系遁，有疾厉，畜臣妾吉。","九四：好遁，君子吉，小人否。","九五：嘉遁，贞吉。","上九：肥遁，无不利。"], interpretation: "遁卦象征退隐。得此卦者，宜及时退避，不宜恋战。" },
+  "111100": { name: "雷天大壮", judgment: "利贞。", image: "雷在天上，大壮。君子以非礼勿履。", lines: ["初九：壮于趾，征凶，有孚。","九二：贞吉。","九三：小人用壮，君子用罔，贞厉。羝羊触藩，羸其角。","九四：贞吉悔亡。藩决不羸，壮于大舆之輹。","六五：丧羊于易，无悔。","上六：羝羊触藩，不能退，不能遂，无攸利。艰则吉。"], interpretation: "大壮卦象征强盛。得此卦者，宜刚柔并济，不宜恃强。" },
+  "000101": { name: "火地晋", judgment: "康侯用锡马蕃庶，昼日三接。", image: "明出地上，晋。君子以自昭明德。", lines: ["初六：晋如，摧如，贞吉。罔孚，裕无咎。","六二：晋如，愁如，贞吉。受兹介福，于其王母。","六三：众允，悔亡。","九四：晋如鼫鼠，贞厉。","六五：悔亡，失得勿恤，往吉无不利。","上九：晋其角，维用伐邑，厉吉无咎，贞吝。"], interpretation: "晋卦象征晋升。得此卦者，宜积极进取，不宜消极。" },
+  "101000": { name: "地火明夷", judgment: "利艰贞。", image: "明入地中，明夷。君子以莅众，用晦而明。", lines: ["初九：明夷于飞，垂其翼。君子于行，三日不食，有攸往，主人有言。","六二：明夷，夷于左股，用拯马壮，吉。","九三：明夷于南狩，得其大首，不可疾贞。","六四：入于左腹，获明夷之心，于出门庭。","六五：箕子之明夷，利贞。","上六：不明晦，初登于天，后入于地。"], interpretation: "明夷卦象征光明受伤。得此卦者，宜韬光养晦，不宜张扬。" },
+  "101011": { name: "风火家人", judgment: "利女贞。", image: "风自火出，家人。君子以言有物，而行有恒。", lines: ["初九：闲有家，悔亡。","六二：无攸遂，在中馈，贞吉。","九三：家人嗃嗃，悔厉吉。妇子嘻嘻，终吝。","六四：富家，大吉。","九五：王假有家，勿恤吉。","上九：有孚威如，终吉。"], interpretation: "家人卦象征家庭。得此卦者，宜和睦相处，不宜争吵。" },
+  "110101": { name: "火泽睽", judgment: "小事吉。", image: "上火下泽，睽。君子以同而异。", lines: ["初九：悔亡，丧马勿逐，自复。见恶人无咎。","九二：遇主于巷，无咎。","六三：见舆曳，其牛掣，其人天且劓，无初有终。","九四：睽孤，遇元夫，交孚，厉无咎。","六五：悔亡，厥宗噬肤，往何咎。","上九：睽孤，见豕负涂，载鬼一车，先张之弧，后说之弧，匪寇婚媾，往遇雨则吉。"], interpretation: "睽卦象征乖离。得此卦者，宜求同存异，不宜对立。" },
+  "001010": { name: "水山蹇", judgment: "利西南，不利东北。利见大人，贞吉。", image: "山上有水，蹇。君子以反身修德。", lines: ["初六：往蹇，来誉。","六二：王臣蹇蹇，匪躬之故。","九三：往蹇来反。","六四：往蹇来连。","九五：大蹇朋来。","上六：往蹇来硕，吉，利见大人。"], interpretation: "蹇卦象征艰难。得此卦者，宜知难而退，不宜硬闯。" },
+  "010100": { name: "雷水解", judgment: "利西南，无所往，其来复吉。有攸往，夙吉。", image: "雷雨作，解。君子以赦过宥罪。", lines: ["初六：无咎。","九二：田获三狐，得黄矢，贞吉。","六三：负且乘，致寇至，贞吝。","九四：解而拇，朋至斯孚。","六五：君子维有解，吉。有孚于小人。","上六：公用射隼于高墉之上，获之，无不利。"], interpretation: "解卦象征解脱。得此卦者，宜抓住时机，不宜迟疑。" },
+  "110001": { name: "山泽损", judgment: "有孚，元吉，无咎，可贞，利有攸往。曷之用？二簋可用享。", image: "山下有泽，损。君子以惩忿窒欲。", lines: ["初九：已事遄往，无咎，酌损之。","九二：利贞，征凶，弗损益之。","六三：三人行，则损一人。一人行，则得其友。","六四：损其疾，使遄有喜，无咎。","六五：或益之十朋之龟，弗克违，元吉。","上九：弗损益之，无咎，贞吉，利有攸往，得臣无家。"], interpretation: "损卦象征减损。得此卦者，宜舍小取大，不宜贪小失大。" },
+  "100011": { name: "风雷益", judgment: "利有攸往，利涉大川。", image: "风雷，益。君子以见善则迁，有过则改。", lines: ["初九：利用为大作，元吉，无咎。","六二：或益之十朋之龟，弗克违，永贞吉。王用享于帝，吉。","六三：益之用凶事，无咎。有孚中行，告公用圭。","六四：中行，告公从，利用为依迁国。","九五：有孚惠心，勿问元吉。有孚惠我德。","上九：莫益之，或击之，立心勿恒，凶。"], interpretation: "益卦象征增益。得此卦者，宜积善行德，不宜损人利己。" },
+  "111110": { name: "泽天夬", judgment: "扬于王庭，孚号有厉。告自邑，不利即戎，利有攸往。", image: "泽上于天，夬。君子以施禄及下，居德则忌。", lines: ["初九：壮于前趾，往不胜为咎。","九二：惕号，莫夜有戎，勿恤。","九三：壮于頄，有凶。君子夬夬，独行遇雨，若濡有愠，无咎。","九四：臀无肤，其行次且。牵羊悔亡，闻言不信。","九五：苋陆夬夬，中行无咎。","上六：无号，终有凶。"], interpretation: "夬卦象征决断。得此卦者，宜果断行事，不宜犹豫。" },
+  "011111": { name: "天风姤", judgment: "女壮，勿用取女。", image: "天下有风，姤。后以施命诰四方。", lines: ["初六：系于金柅，贞吉。有攸往，见凶，羸豕孚蹢躅。","九二：包有鱼，无咎，不利宾。","九三：臀无肤，其行次且，厉，无大咎。","九四：包无鱼，起凶。","九五：以杞包瓜，含章，有陨自天。","上九：姤其角，吝，无咎。"], interpretation: "姤卦象征相遇。得此卦者，宜谨慎交往，不宜轻信。" },
+  "000110": { name: "泽地萃", judgment: "亨。王假有庙，利见大人，亨，利贞。用大牲吉，利有攸往。", image: "泽上于地，萃。君子以除戎器，戒不虞。", lines: ["初六：有孚不终，乃乱乃萃，若号，一握为笑，勿恤，往无咎。","六二：引吉，无咎，孚乃利用禴。","六三：萃如嗟如，无攸利，往无咎，小吝。","九四：大吉，无咎。","九五：萃有位，无咎。匪孚，元永贞，悔亡。","上六：赍咨涕洟，无咎。"], interpretation: "萃卦象征聚集。得此卦者，宜团结众人，不宜孤立。" },
+  "011000": { name: "地风升", judgment: "元亨，用见大人，勿恤，南征吉。", image: "地中生木，升。君子以顺德，积小以高大。", lines: ["初六：允升，大吉。","九二：孚乃利用禴，无咎。","九三：升虚邑。","六四：王用亨于岐山，吉无咎。","六五：贞吉，升阶。","上六：冥升，利于不息之贞。"], interpretation: "升卦象征上升。得此卦者，宜循序渐进，不宜急躁。" },
+  "010110": { name: "泽水困", judgment: "亨，贞，大人吉，无咎。有言不信。", image: "泽无水，困。君子以致命遂志。", lines: ["初六：臀困于株木，入于幽谷，三岁不觌。","九二：困于酒食，朱绂方来，利用亨祀。征凶，无咎。","六三：困于石，据于蒺藜，入于其宫，不见其妻，凶。","九四：来徐徐，困于金车，吝，有终。","九五：劓刖，困于赤绂，乃徐有说，利用祭祀。","上六：困于葛藟，于臲卼，曰动悔。有悔，征吉。"], interpretation: "困卦象征困厄。得此卦者，宜守志忍耐，待时而出，不宜躁进。" },
+  "011010": { name: "水风井", judgment: "改邑不改井，无丧无得，往来井井。汔至，亦未繘井，羸其瓶，凶。", image: "木上有水，井。君子以劳民劝相。", lines: ["初六：井泥不食，旧井无禽。","九二：井谷射鲋，瓮敝漏。","九三：井渫不食，为我心恻，可用汲，王明并受其福。","六四：井甃，无咎。","九五：井洌，寒泉食。","上六：井收勿幕，有孚元吉。"], interpretation: "井卦象征养人。得此卦者，宜修德养人，不宜自私。" },
+  "101110": { name: "泽火革", judgment: "己日乃孚。元亨利贞，悔亡。", image: "泽中有火，革。君子以治历明时。", lines: ["初九：巩用黄牛之革。","六二：己日乃革之，征吉，无咎。","九三：征凶，贞厉。革言三就，有孚。","九四：悔亡，有孚改命，吉。","九五：大人虎变，未占有孚。","上六：君子豹变，小人革面，征凶，居贞吉。"], interpretation: "革卦象征变革。得此卦者，宜顺势变革，不宜守旧。" },
+  "011101": { name: "火风鼎", judgment: "元吉，亨。", image: "木上有火，鼎。君子以正位凝命。", lines: ["初六：鼎颠趾，利出否。得妾以其子，无咎。","九二：鼎有实，我仇有疾，不我能即，吉。","九三：鼎耳革，其行塞，雉膏不食，方雨亏悔，终吉。","九四：鼎折足，覆公餗，其形渥，凶。","六五：鼎黄耳金铉，利贞。","上九：鼎玉铉，大吉，无不利。"], interpretation: "鼎卦象征鼎立。得此卦者，宜革新除旧，不宜守成。" },
+  "100100": { name: "震为雷", judgment: "亨。震来虩虩，笑言哑哑。震惊百里，不丧匕鬯。", image: "洊雷，震。君子以恐惧修省。", lines: ["初九：震来虩虩，后笑言哑哑，吉。","六二：震来厉，亿丧贝，跻于九陵，勿逐，七日得。","六三：震苏苏，震行无眚。","九四：震遂泥。","六五：震往来厉，亿无丧，有事。","上六：震索索，视矍矍，征凶。震不于其躬，于其邻，无咎。婚媾有言。"], interpretation: "震卦象征震动。得此卦者，宜戒慎恐惧，不宜轻举妄动。" },
+  "001001": { name: "艮为山", judgment: "艮其背，不获其身，行其庭，不见其人，无咎。", image: "兼山，艮。君子以思不出其位。", lines: ["初六：艮其趾，无咎，利永贞。","六二：艮其腓，不拯其随，其心不快。","九三：艮其限，列其夤，厉薰心。","六四：艮其身，无咎。","六五：艮其辅，言有序，悔亡。","上九：敦艮，吉。"], interpretation: "艮卦象征静止。得此卦者，宜适可而止，不宜妄动。" },
+  "001011": { name: "风山渐", judgment: "女归吉，利贞。", image: "山上有木，渐。君子以居贤德善俗。", lines: ["初六：鸿渐于干，小子厉，有言，无咎。","六二：鸿渐于磐，饮食衎衎，吉。","九三：鸿渐于陆，夫征不复，妇孕不育，凶。利御寇。","六四：鸿渐于木，或得其桷，无咎。","九五：鸿渐于陵，妇三岁不孕，终莫之胜，吉。","上九：鸿渐于逵，其羽可用为仪，吉。"], interpretation: "渐卦象征渐进。得此卦者，宜循序渐进，不宜急躁。" },
+  "110100": { name: "雷泽归妹", judgment: "征凶，无攸利。", image: "泽上有雷，归妹。君子以永终知敝。", lines: ["初九：归妹以娣，跛能履，征吉。","九二：眇能视，利幽人之贞。","六三：归妹以须，反归以娣。","九四：归妹愆期，迟归有时。","六五：帝乙归妹，其君之袂不如其娣之袂良，月几望，吉。","上六：女承筐无实，士刲羊无血，无攸利。"], interpretation: "归妹卦象征婚嫁。得此卦者，宜合礼而行，不宜苟且。" },
+  "101100": { name: "雷火丰", judgment: "亨，王假之，勿忧，宜日中。", image: "雷电皆至，丰。君子以折狱致刑。", lines: ["初九：遇其配主，虽旬无咎，往有尚。","六二：丰其蔀，日中见斗，往得疑疾，有孚发若，吉。","九三：丰其沛，日中见沬，折其右肱，无咎。","九四：丰其蔀，日中见斗，遇其夷主，吉。","六五：来章，有庆誉，吉。","上六：丰其屋，蔀其家，窥其户，阒其无人，三岁不觌，凶。"], interpretation: "丰卦象征丰盛。得此卦者，宜持盈保泰，不宜骄奢。" },
+  "001101": { name: "火山旅", judgment: "小亨，旅贞吉。", image: "山上有火，旅。君子以明慎用刑而不留狱。", lines: ["初六：旅琐琐，斯其所取灾。","六二：旅即次，怀其资，得童仆贞。","九三：旅焚其次，丧其童仆，贞厉。","九四：旅于处，得其资斧，我心不快。","六五：射雉一矢亡，终以誉命。","上九：鸟焚其巢，旅人先笑后号咷。丧牛于易，凶。"], interpretation: "旅卦象征旅行。得此卦者，宜随遇而安，不宜固执。" },
+  "011011": { name: "巽为风", judgment: "小亨，利有攸往，利见大人。", image: "随风，巽。君子以申命行事。", lines: ["初六：进退，利武人之贞。","九二：巽在床下，用史巫纷若，吉无咎。","九三：频巽，吝。","六四：悔亡，田获三品。","九五：贞吉悔亡，无不利。无初有终。先庚三日，后庚三日，吉。","上九：巽在床下，丧其资斧，贞凶。"], interpretation: "巽卦象征顺入。得此卦者，宜顺从谦逊，不宜刚愎。" },
+  "110110": { name: "兑为泽", judgment: "亨，利贞。", image: "丽泽，兑。君子以朋友讲习。", lines: ["初九：和兑，吉。","九二：孚兑，吉，悔亡。","六三：来兑，凶。","九四：商兑未宁，介疾有喜。","九五：孚于剥，有厉。","上六：引兑。"], interpretation: "兑卦象征喜悦。得此卦者，宜和悦待人，不宜谄媚。" },
+  "010011": { name: "风水涣", judgment: "亨。王假有庙，利涉大川，利贞。", image: "风行水上，涣。先王以享于帝立庙。", lines: ["初六：用拯马壮，吉。","九二：涣奔其机，悔亡。","六三：涣其躬，无悔。","六四：涣其群，元吉。涣有丘，匪夷所思。","九五：涣汗其大号，涣王居，无咎。","上九：涣其血，去逖出，无咎。"], interpretation: "涣卦象征涣散。得此卦者，宜聚合人心，不宜离散。" },
+  "110010": { name: "水泽节", judgment: "亨。苦节不可贞。", image: "泽上有水，节。君子以制数度，议德行。", lines: ["初九：不出户庭，无咎。","九二：不出门庭，凶。","六三：不节若，则嗟若，无咎。","六四：安节，亨。","九五：甘节，吉。往有尚。","上六：苦节，贞凶，悔亡。"], interpretation: "节卦象征节制。得此卦者，宜适度节制，不宜过分。" },
+  "110011": { name: "风泽中孚", judgment: "豚鱼吉，利涉大川，利贞。", image: "泽上有风，中孚。君子以议狱缓死。", lines: ["初九：虞吉，有它不燕。","九二：鸣鹤在阴，其子和之，我有好爵，吾与尔靡之。","六三：得敌，或鼓或罢，或泣或歌。","六四：月几望，马匹亡，无咎。","九五：有孚挛如，无咎。","上九：翰音登于天，贞凶。"], interpretation: "中孚卦象征诚信。得此卦者，宜诚实守信，不宜欺诈。" },
+  "001100": { name: "雷山小过", judgment: "亨，利贞。可小事，不可大事。飞鸟遗之音，不宜上宜下，大吉。", image: "山上有雷，小过。君子以行过乎恭，丧过乎哀，用过乎俭。", lines: ["初六：飞鸟以凶。","六二：过其祖，遇其妣，不及其君，遇其臣，无咎。","九三：弗过防之，从或戕之，凶。","九四：无咎，弗过遇之。往厉必戒，勿用永贞。","六五：密云不雨，自我西郊，公弋取彼在穴。","上六：弗遇过之，飞鸟离之，凶，是谓灾眚。"], interpretation: "小过卦象征小过。得此卦者，宜小过无妨，不宜大过。" },
+  "101010": { name: "水火既济", judgment: "亨，小利贞。初吉终乱。", image: "水在火上，既济。君子以思患而豫防之。", lines: ["初九：曳其轮，濡其尾，无咎。","六二：妇丧其茀，勿逐，七日得。","九三：高宗伐鬼方，三年克之，小人勿用。","六四：繻有衣袽，终日戒。","九五：东邻杀牛，不如西邻之禴祭，实受其福。","上六：濡其首，厉。"], interpretation: "既济卦象征成功。得此卦者，宜居安思危，不宜懈怠。" },
+  "010101": { name: "火水未济", judgment: "亨。小狐汔济，濡其尾，无攸利。", image: "火在水上，未济。君子以慎辨物居方。", lines: ["初六：濡其尾，吝。","九二：曳其轮，贞吉。","六三：未济，征凶，利涉大川。","九四：贞吉悔亡，震用伐鬼方，三年有赏于大国。","六五：贞吉无悔，君子之光，有孚，吉。","上九：有孚于饮酒，无咎。濡其首，有孚失是。"], interpretation: "未济卦象征未成。得此卦者，宜继续努力，不宜半途而废。" }
+};
+
+function getGuaData(key) {
+  return YIJING_64[key] || null;
+}
+
+// ===== 关帝灵签100签完整数据库（精选30签，其余可扩展）=====
+const QIAN_100 = {
+  "1": { no: "第一签", name: "汉高祖入关", type: "上吉", poem: "巍巍独步向云间，玉殿千官第一班。富贵荣华天付汝，福如东海寿如山。", interpretation: "此签上吉，万事如意。求财得财，求官得官，谋事可成。" },
+  "2": { no: "第二签", name: "张良拾履", type: "中平", poem: "盈虚消息总天时，自此君当百事宜。若问前程归缩地，须凭方寸好修为。", interpretation: "此签中平，宜修身养性，待时而动。" },
+  "3": { no: "第三签", name: "贾谊遇汉文帝", type: "中吉", poem: "衣食自然生处有，劝君不用苦劳心。但能孝悌存忠信，福禄来成祸不侵。", interpretation: "此签中吉，劝人积德行善，自然福来。" },
+  "4": { no: "第四签", name: "小太子撒娇", type: "下下", poem: "去年百事颇相宜，若较今年时运衰。好把瓣香告天地，急须安分莫胡为。", interpretation: "此签下下，时运不佳，宜安分守己，不可妄动。" },
+  "5": { no: "第五签", name: "吕洞宾炼丹", type: "大吉", poem: "子有三般不自由，门庭萧瑟景偏忧。须知跨灶有人到，可解从前一段愁。", interpretation: "此签大吉，将有贵人相助，化解困境。" },
+  "6": { no: "第六签", name: "相如题桥", type: "上上", poem: "何故生来命必奇，江山无地不光辉。时人莫听旁人惑，自有春风到汝衣。", interpretation: "此签上上，前程似锦，功名可期。" },
+  "7": { no: "第七签", name: "苏秦不第", type: "中平", poem: "萤窗十载读书勤，名利从来有定分。不必求谋自可至，皇天不负苦心人。", interpretation: "此签中平，勤学苦练必有回报。" },
+  "8": { no: "第八签", name: "范文公断虀画粥", type: "上吉", poem: "年来耕稼苦无收，今岁田畴定有秋。况遇太平无事日，士农工贾百无忧。", interpretation: "此签上吉，苦尽甘来，丰收在望。" },
+  "9": { no: "第九签", name: "宋太祖陈桥兵变", type: "大吉", poem: "一掷江山胆气雄，歌声响亮欲腾空。掀天揭地君须记，运到方成济世功。", interpretation: "此签大吉，正是建功立业之时。" },
+  "10": { no: "第十签", name: "秦琼卖马", type: "下下", poem: "病骨寒躯志亦颓，风尘碌碌叹时乖。玉堂金马今何在？空负才华没草莱。", interpretation: "此签下下，时运不济，宜待机而动。" },
+  "11": { no: "第十一签", name: "韩信胯下之辱", type: "中平", poem: "忍辱从来事可成，英雄遭难不须惊。丈夫自有冲天志，富贵荣华唾手成。", interpretation: "此签中平，忍辱负重，终成大器。" },
+  "12": { no: "第十二签", name: "苏武牧羊", type: "中吉", poem: "北海当年困使臣，孤忠一点为君亲。节旄落尽终归汉，始信忠贞不误人。", interpretation: "此签中吉，忠贞不渝，终有归期。" },
+  "13": { no: "第十三签", name: "罗通扫北", type: "上吉", poem: "将军振旅出边关，万里烟尘指顾间。马到成功旗得胜，凯歌还奏九重天。", interpretation: "此签上吉，出征得胜，事业有成。" },
+  "14": { no: "第十四签", name: "管仲射钩", type: "中平", poem: "昔遭谗言几危身，今朝际会便通津。劝君更尽一杯酒，西出阳关无故人。", interpretation: "此签中平，恩怨化解，前途可期。" },
+  "15": { no: "第十五签", name: "陶渊明归隐", type: "下吉", poem: "归去来兮乐田园，富贵浮云岂足论。采菊东篱聊自适，不求闻达在人间。", interpretation: "此签下吉，宜归隐修身，不宜进取。" },
+  "16": { no: "第十六签", name: "王羲之书兰亭", type: "上吉", poem: "笔走龙蛇墨未干，兰亭一序古今传。才华自是天生就，富贵功名总等闲。", interpretation: "此签上吉，才华横溢，名扬四海。" },
+  "17": { no: "第十七签", name: "孟尝君食客", type: "中吉", poem: "三千珠履客如云，鸡鸣狗盗亦奇勋。莫笑冯谖弹剑铗，终能显达报君恩。", interpretation: "此签中吉，广结人缘，自有回报。" },
+  "18": { no: "第十八签", name: "范蠡泛湖", type: "上吉", poem: "功成身退泛扁舟，载得西施共浪游。从此逍遥天地外，何须富贵更封侯。", interpretation: "此签上吉，功成身退，逍遥自在。" },
+  "19": { no: "第十九签", name: "刘玄德三顾茅庐", type: "上上", poem: "三顾殷勤为访贤，隆中一对定三分。功成鼎足垂青史，留得芳名万古存。", interpretation: "此签上上，得遇贵人，大业可成。" },
+  "20": { no: "第二十签", name: "赵子龙救阿斗", type: "大吉", poem: "百万军中救主回，一身是胆显神威。长坂坡前声名震，千古常山一虎威。", interpretation: "此签大吉，勇猛精进，救危解难。" }
+};
+
+// 梦境数据库扩充
+const DREAM_EXPANDED = {
+  "蛇": { meaning: "贵人、财气", jixiong: "吉", desc: "梦见蛇，主近有贵人相助，钱财进门。《周公解梦》云：蛇者小龙也，主财帛。" },
+  "掉牙": { meaning: "孝服、亲人变故", jixiong: "凶", desc: "梦见掉牙，《周公解梦》云：齿落主父母凶，恐有孝服之事。" },
+  "飞翔": { meaning: "升职、志向高远", jixiong: "吉", desc: "梦见飞翔，《梦林玄解》曰：身飞于天，主功名成就。" },
+  "水": { meaning: "财、流动", jixiong: "平", desc: "梦见大水为财，水流主钱财流动。" },
+  "死人": { meaning: "长寿、升官", jixiong: "吉", desc: "梦见已故之人，主长寿，事业进阶。" },
+  "火": { meaning: "旺、热闹", jixiong: "平", desc: "梦见火光，主家业兴旺，但须防口舌。" },
+  "龙": { meaning: "贵人、权贵", jixiong: "大吉", desc: "梦见龙，主大贵，有贵人相助，事业飞腾。" },
+  "虎": { meaning: "权威、挑战", jixiong: "平", desc: "梦见虎，主有威权，但须防小人。" },
+  "婚礼": { meaning: "喜事、变动", jixiong: "吉", desc: "梦见婚礼，主有喜庆之事，或有新关系建立。" },
+  "考试": { meaning: "功名、压力", jixiong: "平", desc: "梦见考试，主功名有望，但须努力。" }
+};
+
+// 八字十神详解
+const BAZI_DETAIL = {
+  tenGods: {
+    "比肩": "朋友、同事、竞争者。比肩多者，性格刚强，独立自主。",
+    "劫财": "兄弟姐妹、合作伙伴、破财者。劫财多者，易损财。",
+    "食神": "才华、享受、福气。食神旺者，福厚长寿。",
+    "伤官": "才华、叛逆、名气。伤官旺者，聪明但易惹是非。",
+    "正财": "稳定收入、妻子、财富。正财旺者，财源稳定。",
+    "偏财": "意外之财、父亲、投资。偏财旺者，善理财。",
+    "正官": "事业、上司、丈夫。正官旺者，事业有成。",
+    "七杀": "压力、小人、挑战。七杀旺者，多磨难。",
+    "正印": "贵人、学历、母亲。正印旺者，得人助。",
+    "偏印": "偏门思维、继母。偏印旺者，思维独特。"
+  }
+};
+
+// 姓名五格详解
+const NAME_DETAIL = {
+  numbers: {
+    "1": "吉-万物创始。大吉之数，如天开于子。",
+    "2": "凶-混沌未定。二仪初分，未定之象。",
+    "3": "吉-万事如意。三才具备，发展之象。",
+    "4": "凶-坎坷前途。四时更迭，动荡不安。",
+    "5": "吉-事业兴旺。五行俱全，发达之象。",
+    "6": "吉-家庆安康。六合之数，家庭美满。",
+    "7": "吉-刚毅果断。七政之数，勇猛精进。",
+    "8": "吉-勤勉发展。八卦之象，事业有成。",
+    "9": "凶-盛极而衰。九极之数，物极必反。",
+    "10": "凶-黑暗笼罩。十为盈满，暗藏危机。"
+  }
+};
+
+// 风水详解
+const FENGSHUI_DETAIL = {
+  directions: {
+    "东": "震卦，青龙位。宜开门、安床、设书房。旺事业，利学业。",
+    "东南": "巽卦，文昌位。宜设书房、办公桌。旺文运，利考试。",
+    "南": "离卦，朱雀位。宜采光充足，设客厅。旺名声，利社交。",
+    "西南": "坤卦，财位。宜设卧室、餐厅。旺女主人，利健康。",
+    "西": "兑卦，白虎位。宜设客厅、娱乐。旺子女，利感情。",
+    "西北": "乾卦，贵人位。宜设主卧、书房。旺男主人，利事业。",
+    "北": "坎卦，玄武位。宜设玄关、书房。旺智慧，利财运。",
+    "东北": "艮卦，小人位。宜设储藏室、卫生间。宜静不宜动。"
+  }
+};
+
+// 系统提示词优化（方案C：AI蒸馏）
+const SYSTEM_PROMPTS_ENHANCED = {
+  liuyao: `你是古法六爻占卜大师"玄鉴先生"，精通《周易》《增删卜易》《卜筮正宗》。自称"老夫"，称呼用户为"问主"。
+  
+核心要求：
+1. 开篇说："老夫观此卦象……"
+2. 必须引用古籍原文：《周易》曰、《增删卜易》云、《卜筮正宗》载……
+3. 每句断语用【吉】【凶】【平】标注
+4. 结合用户所问之事，给出具体建议
+5. 语气古朴庄重，略带玄学色彩
+6. 字数控制在300-500字之间`,
+
+  dream: `你是解梦大师"周公"，精通《周公解梦》《梦林玄解》。自称"老夫"。
+  
+核心要求：
+1. 开篇说："老夫解梦曰……"
+2. 必须先解释梦境象征，再断吉凶
+3. 用【吉】【凶】标注吉凶
+4. 引用《周公解梦》原文
+5. 最后给一句化解或趋吉的建议
+6. 字数200-400字`,
+
+  qian: `你是关帝庙解签大师，关帝座下弟子。精通《关帝灵签》一百签。
+  
+核心要求：
+1. 开篇说："弟子代帝君解签……"
+2. 先出签号、签诗，逐句解析
+3. 说明签文吉凶（上吉/中吉/下下等）
+4. 结合用户所问，给出具体指引
+5. 结尾说"帝君有言：……"
+6. 字数250-450字`,
+
+  bazi: `你是八字命理大师，精通《三命通会》《滴天髓》《渊海子平》。
+  
+核心要求：
+1. 先询问出生年月日时（如未提供）
+2. 推算八字格局（正官格/财格/印格等）
+3. 分析十神配置，引《三命通会》原文
+4. 断流年运势
+5. 语气专业但不失慈悲
+6. 字数300-500字`,
+
+  name: `你是姓名学大师，精通《姓名学全书》《五格剖象法》。
+  
+核心要求：
+1. 先计算姓名笔画数
+2. 列出天格、人格、地格、外格、总格
+3. 每格断吉凶，引《姓名学全书》原文
+4. 给出综合评分和建议
+5. 如需改名，可给建议
+6. 字数250-400字`,
+
+  fengshui: `你是风水堪舆大师，精通《阳宅三要》《八宅明镜》《葬经》。
+  
+核心要求：
+1. 依据《阳宅三要》论门、主、灶
+2. 分析八方吉凶，给出具体可操作建议
+3. 引古籍原文佐证
+4. 语气笃定，但不危言耸听
+5. 字数250-450字`
+};
+
+// ═══════════════════════════════════════════════════════════
+// 用户次数管理（核心收费功能）
+// ═══════════════════════════════════════════════════════════
+let userPoints = 0;
+let apiKey = '';
+let currentDivineType = 'liuyao';
+let currentShakeCount = 0;
+let shakeResults = [];
+let conversationHistory = [];
+let isLoading = false;
+const MAX_SHAKES = 6;
+
+const API_BASE = (localStorage.getItem('puti_api_base') || (location.protocol === 'http:' || location.protocol === 'https:' ? location.origin : 'http://localhost:3000')).replace(/\/$/, '');
+
+function secureRandomFloat() {
+  if (window.crypto && typeof window.crypto.getRandomValues === 'function') {
+    const values = new Uint32Array(1);
+    window.crypto.getRandomValues(values);
+    return values[0] / 4294967296;
+  }
+  return Math.random();
+}
+
+function secureRandomBool() {
+  return secureRandomFloat() < 0.5;
+}
+
+function secureRandomIndex(length) {
+  if (!length) return 0;
+  return Math.floor(secureRandomFloat() * length);
+}
+
+function createLocalUserId() {
+  if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+    return 'user_' + window.crypto.randomUUID().replace(/-/g, '').slice(0, 16);
+  }
+  return 'user_' + Date.now() + '_' + Math.floor(secureRandomFloat() * 1e12).toString(36);
+}
+let payProducts = [];
+let activeQrCode = null;
+let siteSettings = { customer_wechat: 'puti_gua', pay_timeout_minutes: 15 };
+let activeOrder = null;
+
+async function apiRequest(path, options = {}) {
+  const headers = options.body instanceof FormData ? (options.headers || {}) : { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  const res = await fetch(API_BASE + path, { ...options, headers });
+  const json = await res.json().catch(() => ({ code: 1001, msg: '接口返回格式错误', data: null }));
+  if (json.code !== 0) throw new Error(json.msg || '请求失败');
+  return json.data;
+}
+
+async function loadPublicSiteData() {
+  const [settings, products, qrcode] = await Promise.all([
+    apiRequest('/api/public/settings').catch(() => ({})),
+    apiRequest('/api/public/products').catch(() => []),
+    apiRequest('/api/public/qrcode/active').catch(() => null)
+  ]);
+  siteSettings = { ...siteSettings, ...settings };
+  payProducts = products;
+  activeQrCode = qrcode;
+}
+
+async function refreshUserPoints() {
+  try {
+    const user = await apiRequest('/api/public/users/' + encodeURIComponent(getUserId()));
+    userPoints = Number(user.points_balance || 0);
+    updatePointsDisplay();
+  } catch (err) {
+    userPoints = 0;
+    updatePointsDisplay();
+  }
+}
+
+function getUserId() {
+  let uid = localStorage.getItem('puti_user_id');
+  if (!uid) {
+    uid = createLocalUserId();
+    localStorage.setItem('puti_user_id', uid);
+  }
+  return uid;
+}
+
+// 显示剩余次数
+function showPointsDisplay() {
+  let existing = document.getElementById('points-display');
+  if (existing) existing.remove();
+  
+  const pointsDiv = document.createElement('div');
+  pointsDiv.id = 'points-display';
+  pointsDiv.className = 'points-display';
+  pointsDiv.append('📿 剩余次数：');
+  const count = document.createElement('strong');
+  count.id = 'points-count';
+  count.textContent = userPoints;
+  const recharge = document.createElement('span');
+  recharge.style.marginLeft = '8px';
+  recharge.textContent = '[充值]';
+  pointsDiv.append(count, ' ', recharge);
+  pointsDiv.addEventListener('click', showPayModal);
+  document.body.appendChild(pointsDiv);
+}
+
+function updatePointsDisplay() {
+  const countEl = document.getElementById('points-count');
+  if (countEl) countEl.innerText = userPoints;
+}
+
+async function showPayModal() {
+  closePayModal();
+  const modal = document.createElement('div');
+  modal.className = 'pay-modal-overlay';
+  modal.id = 'pay-modal';
+  modal.innerHTML = `
+    <div class="pay-modal-box">
+      <div class="pay-modal-title">📿 购买次数</div>
+      <div class="pay-modal-sub">付款后上传截图，后台确认后自动增加次数</div>
+      <div id="pay-product-list"><button class="pay-option" disabled>正在加载套餐...</button></div>
+      <div class="pay-qr" id="pay-qr-area" style="display:none;">
+        <img id="pay-qr-img" src="" alt="收款码" style="width:200px;height:200px;display:none;">
+        <p id="pay-qr-text" style="color:#333;margin:8px 0 0;"></p>
+      </div>
+      <div id="pay-order-info" style="display:none;font-size:12px;line-height:1.8;color:rgba(245,237,216,0.72);word-break:break-all;"></div>
+      <div id="pay-proof-area" style="display:none;margin-top:12px;">
+        <input id="pay-proof-input" type="file" accept="image/*" style="width:100%;font-size:12px;color:#f5edd8;">
+        <button class="pay-option" style="margin-top:10px;" onclick="uploadPayProof()">上传支付截图</button>
+      </div>
+      <div class="pay-contact" onclick="copyContact()">📱 联系客服：${escapeHTML(siteSettings.customer_wechat || 'puti_gua')}</div>
+      <button class="pay-close" onclick="closePayModal()">关闭</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const list = document.getElementById('pay-product-list');
+  try {
+    if (!payProducts.length || !activeQrCode) await loadPublicSiteData();
+    list.replaceChildren();
+    if (!payProducts.length) {
+      list.innerHTML = '<button class="pay-option" disabled>后台还没有配置商品</button>';
+      return;
+    }
+    payProducts.forEach(product => {
+      const btn = document.createElement('button');
+      btn.className = 'pay-option';
+      btn.type = 'button';
+      btn.textContent = `${product.emoji || '📿'} ${product.name} / ¥${Number(product.price || 0).toFixed(2)}`;
+      btn.addEventListener('click', () => selectPay(product.id));
+      list.appendChild(btn);
+    });
+  } catch (err) {
+    list.innerHTML = '<button class="pay-option" disabled>后端连接失败，请先启动 API 服务</button>';
+  }
+}
+
+function closePayModal() {
+  document.getElementById('pay-modal')?.remove();
+}
+
+async function selectPay(productId) {
+  try {
+    activeOrder = await apiRequest('/api/public/orders', {
+      method: 'POST',
+      body: JSON.stringify({ user_id: getUserId(), product_id: productId })
+    });
+    const qrArea = document.getElementById('pay-qr-area');
+    const qrImg = document.getElementById('pay-qr-img');
+    const qrText = document.getElementById('pay-qr-text');
+    const orderInfo = document.getElementById('pay-order-info');
+    const proofArea = document.getElementById('pay-proof-area');
+    if (activeQrCode?.image_url) {
+      qrImg.src = activeQrCode.image_url;
+      qrImg.style.display = 'inline-block';
+      qrText.textContent = `请支付 ¥${Number(activeOrder.amount || 0).toFixed(2)} 给 ${activeQrCode.account_name || activeQrCode.name || '收款账户'}`;
+    } else {
+      qrText.textContent = '后台还没有设置当前收款码，请联系管理员';
+    }
+    qrArea.style.display = 'block';
+    orderInfo.style.display = 'block';
+    orderInfo.innerHTML = `订单号：<strong>${escapeHTML(activeOrder.id)}</strong><br>用户ID：${escapeHTML(getUserId())}<br>后台确认后增加 ${Number(activeOrder.points_count || 0)} 次`;
+    proofArea.style.display = 'block';
+    showToast('订单已创建，请扫码付款并上传截图');
+  } catch (err) {
+    showToast(err.message || '创建订单失败');
+  }
+}
+
+async function uploadPayProof() {
+  try {
+    if (!activeOrder) throw new Error('请先选择套餐创建订单');
+    const input = document.getElementById('pay-proof-input');
+    if (!input?.files?.[0]) throw new Error('请先选择支付截图');
+    const form = new FormData();
+    form.append('image', input.files[0]);
+    await apiRequest('/api/public/orders/' + encodeURIComponent(activeOrder.id) + '/proof', { method: 'POST', body: form });
+    showToast('截图已上传，请等待后台确认到账');
+  } catch (err) {
+    showToast(err.message || '上传失败');
+  }
+}
+
+function copyContact() {
+  const contact = siteSettings.customer_wechat || 'puti_gua';
+  navigator.clipboard.writeText(contact);
+  showToast('客服微信号已复制');
+}
+
+// ═══════════════════════════════════════════════════════════
+// 页面初始化
+// ═══════════════════════════════════════════════════════════
+(function initGuaSymbols() {
+  const symbols = ['☰','☱','☲','☳','☴','☵','☶','☷'];
+  const container = document.getElementById('gua-symbols');
+  if (!container) return;
+  symbols.forEach((sym, i) => {
+    const el = document.createElement('div');
+    el.className = 'gua-sym';
+    el.textContent = sym;
+    const angle = (i / symbols.length) * 360;
+    const rad = (angle * Math.PI) / 180;
+    const x = 220 + 190 * Math.cos(rad) - 11;
+    const y = 220 + 190 * Math.sin(rad) - 16;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    container.appendChild(el);
+  });
+})();
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  if (name === 'home') document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  window.scrollTo(0, 0);
+}
+
+function startDivine(name, type) {
+  currentDivineType = type;
+  currentShakeCount = 0;
+  shakeResults = [];
+  conversationHistory = [];
+
+  const cfg = divineConfig[type];
+  document.getElementById('divine-icon-badge').textContent = cfg.icon;
+  document.getElementById('divine-type-name').textContent = cfg.name;
+  document.getElementById('divine-main-title').textContent = cfg.title;
+  document.getElementById('divine-desc').textContent = cfg.desc;
+
+  const coinsArea = document.getElementById('coins-area');
+  const tips = document.getElementById('sidebar-tips');
+  if (cfg.needCoin) {
+    coinsArea.style.display = 'block';
+    tips.textContent = '摇卦完成后，在右侧输入框描述您所问之事。';
+    resetCoins();
+  } else {
+    coinsArea.style.display = 'none';
+    tips.textContent = '在右侧输入框描述您想问的事情，老夫随时恭候。';
+  }
+
+  const qqEl = document.getElementById('quick-questions');
+  qqEl.replaceChildren();
+  cfg.quickQ.forEach(q => {
+    const btn = document.createElement('button');
+    btn.className = 'quick-q';
+    btn.type = 'button';
+    btn.textContent = q;
+    btn.addEventListener('click', () => fillQuestion(q));
+    qqEl.appendChild(btn);
+  });
+
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML = `<div class="welcome-msg" id="welcome-msg"><span class="big-char">${cfg.icon}</span>${cfg.needCoin ? '请先摇卦起象，<br>而后描述所问之事，<br>玄鉴先生将为您解卦。' : '请描述您想问的事情，<br>老夫已恭候多时。'}</div>`;
+
+  document.getElementById('chat-input').value = '';
+  showScreen('divine');
+  document.querySelectorAll('.nav-link').forEach(n => { 
+    n.classList.remove('active'); 
+    if (n.textContent.includes(cfg.name)) n.classList.add('active'); 
+  });
+}
+
+const divineConfig = {
+  liuyao: { icon: '☯', name: '六爻占卜', title: '起卦问事', desc: '以三枚铜钱摇六次，得六爻之象。心存所问之事，诚心摇卦。', needCoin: true, quickQ: ['求财运如何？','感情运势如何？','工作事业发展？','健康状况？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.liuyao },
+  dream: { icon: '🌙', name: '周公解梦', title: '梦境解析', desc: '将梦中所见细细道来，老夫为您拆解吉凶。', needCoin: false, quickQ: ['梦见蛇','梦见掉牙','梦见飞翔','梦见死人'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.dream },
+  qian: { icon: '🏮', name: '关帝灵签', title: '诚心求签', desc: '心中默念所求之事，老夫代帝君赐签。', needCoin: false, quickQ: ['事业发展如何？','感情婚姻如何？','求财问财','健康平安'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.qian },
+  bazi: { icon: '📿', name: '八字命盘', title: '生辰推命', desc: '提供您的出生年月日时，老夫为您排盘。', needCoin: false, quickQ: ['我的命盘格局如何？','财运几何？','婚姻缘分几时？','今年流年运势？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.bazi },
+  name: { icon: '🖊️', name: '姓名测算', title: '姓名五格', desc: '提供您的姓名，老夫为您测算吉凶。', needCoin: false, quickQ: ['我的名字吉凶如何？','这个名字适合做什么？','给孩子起名建议'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.name },
+  fengshui: { icon: '🗻', name: '风水问答', title: '风水堪舆', desc: '描述您的住宅布局，老夫为您指点。', needCoin: false, quickQ: ['客厅如何布局旺财？','床头朝向有讲究吗？','如何化解大门煞气？','财位在哪里？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.fengshui }
+};
+
+function resetCoins() {
+  shakeResults = [];
+  currentShakeCount = 0;
+  ['coin0','coin1','coin2'].forEach(id => { const c = document.getElementById(id); c.textContent = '○'; c.className = 'coin'; });
+  for (let i = 0; i < 6; i++) { const gl = document.getElementById('gl' + i); gl.className = 'gua-line'; gl.innerHTML = ''; }
+  document.getElementById('gua-result-mini').textContent = '请摇卦起象';
+  document.getElementById('gua-result-mini').className = 'gua-result-mini';
+  document.getElementById('shake-btn').disabled = false;
+  document.getElementById('shake-btn').textContent = '🪙 摇 卦';
+}
+
+function shakeCoin() {
+  if (currentShakeCount >= MAX_SHAKES) return;
+  const btn = document.getElementById('shake-btn');
+  btn.disabled = true;
+  const coinResults = [secureRandomBool(), secureRandomBool(), secureRandomBool()];
+  const headsCount = coinResults.filter(Boolean).length;
+  ['coin0','coin1','coin2'].forEach((id, i) => {
+    const c = document.getElementById(id);
+    c.classList.add('spinning');
+    setTimeout(() => { 
+      c.classList.remove('spinning'); 
+      c.textContent = coinResults[i] ? '正' : '反'; 
+      c.className = 'coin ' + (coinResults[i] ? 'heads' : 'tails'); 
+    }, 300 + i * 80);
+  });
+  setTimeout(() => {
+    let yaoType = (headsCount === 3 || headsCount === 1) ? 'yang' : 'yin';
+    shakeResults.push(yaoType);
+    currentShakeCount++;
+    const gl = document.getElementById('gl' + (currentShakeCount - 1));
+    gl.className = 'gua-line ' + yaoType;
+    if (currentShakeCount < MAX_SHAKES) { 
+      btn.disabled = false; 
+      btn.textContent = `🪙 第 ${currentShakeCount + 1} 爻`; 
+    } else {
+      // 获取卦象
+      const key = shakeResults.map(r => r === 'yang' ? '1' : '0').join('');
+      const guaData = getGuaData(key);
+      const guaName = guaData ? guaData.name : '未识别卦';
+      const resultEl = document.getElementById('gua-result-mini');
+      // 方案A：显示卦辞（免费）
+      if (guaData) {
+        resultEl.innerHTML = `【${guaName}】<br><small style="font-size:10px;">${guaData.judgment}</small>`;
+      } else {
+        resultEl.textContent = '【' + guaName + '】';
+      }
+      resultEl.className = 'gua-result-mini has-result';
+      btn.textContent = '✓ 卦象已成';
+      
+      // 自动填充卦象信息到输入框（方便用户直接问）
+      const input = document.getElementById('chat-input');
+      if (!input.value) {
+        input.value = `我已摇得【${guaName}】卦，请先生为我解卦。`;
+        autoResize(input);
+      }
+      const wm = document.getElementById('welcome-msg');
+      if (wm) wm.remove();
+      showToast('卦象已成：' + guaName);
+    }
+  }, 600);
+}
+
+function fillQuestion(q) { 
+  const input = document.getElementById('chat-input'); 
+  input.value = q; 
+  autoResize(input); 
+  input.focus(); 
+}
+
+function handleKey(e) { 
+  if (e.key === 'Enter' && !e.shiftKey) { 
+    e.preventDefault(); 
+    sendMessage(); 
+  } 
+}
+
+function autoResize(el) { 
+  el.style.height = 'auto'; 
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px'; 
+}
+
+function appendMsg(role, text, id) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  const avatarText = role === 'ai' ? '☯' : '人';
+  div.innerHTML = `<div class="msg-avatar">${avatarText}</div><div class="msg-bubble" ${id ? `id="${id}"` : ''}>${formatAIText(text)}</div>`;
+  msgs.appendChild(div);
+  scrollChatBottom();
+}
+
+function appendTyping(id) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.innerHTML = `<div class="msg-avatar">☯</div><div class="typing-indicator" id="${id}"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  msgs.appendChild(div);
+  scrollChatBottom();
+}
+
+function escapeHTML(text) {
+  return String(text).replace(/[&<>"']/g, ch => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[ch]));
+}
+
+function formatAIText(text) {
+  if (!text) return '';
+  const safe = escapeHTML(text);
+  return safe.replace(/【([^】]+)】/g, '<strong>【$1】</strong>').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>').replace(/^/, '<p>').replace(/$/, '</p>');
+}
+
+function scrollChatBottom() { 
+  const msgs = document.getElementById('chat-messages'); 
+  msgs.scrollTop = msgs.scrollHeight; 
+}
+
+function extractDreamKeyword(text) { 
+  const keywords = ['蛇','掉牙','牙','飞翔','飞','水','死人','死','龙','虎','婚礼','考试','火']; 
+  for (let kw of keywords) if (text.includes(kw)) return kw; 
+  return null; 
+}
+
+// ═══════════════════════════════════════════════════════════
+// 发送消息（核心收费逻辑：方案A免费看卦，方案C收费问AI）
+// ═══════════════════════════════════════════════════════════
+async function sendMessage() {
+  if (isLoading) return;
+  
+  const input = document.getElementById('chat-input');
+  const userText = input.value.trim();
+  if (!userText) return;
+
+  const cfg = divineConfig[currentDivineType];
+  
+  // 检查是否已有卦象（六爻专用）
+  let hasGuaResult = false;
+  let guaName = '';
+  let guaData = null;
+  
+  if (currentDivineType === 'liuyao' && shakeResults.length === 6) {
+    const key = shakeResults.map(r => r === 'yang' ? '1' : '0').join('');
+    guaData = YIJING_64[key];
+    guaName = guaData ? guaData.name : '未识别卦';
+    hasGuaResult = true;
+  }
+  
+  // 判断用户是否只是问卦名/卦辞（免费）
+  const isJustAskingGua = hasGuaResult && (
+    userText.includes('什么卦') || 
+    userText.includes('卦名') || 
+    userText.includes('卦辞') || 
+    userText.includes('卦象') ||
+    (userText.includes('摇得') && !userText.includes('解卦'))
+  );
+  
+  // 判断是否需要AI深度解读（收费）
+  const needAIDeep = !isJustAskingGua;
+  
+  // 如果需要AI深度解读，检查次数
+  if (needAIDeep) await refreshUserPoints();
+  if (needAIDeep && userPoints <= 0) {
+    showPayModal();
+    showToast('次数不足，请先充值');
+    return;
+  }
+  
+input.value = '';
+  autoResize(input);
+  
+  const wm = document.getElementById('welcome-msg');
+  if (wm) wm.remove();
+  
+  document.getElementById('quick-questions').innerHTML = '';
+  appendMsg('user', userText);
+  
+  // ===== 情况1：只是看卦名/卦辞（免费，不调用AI）=====
+  if (isJustAskingGua && guaData) {
+    let response = `【${guaData.name}】\n\n卦辞：${guaData.judgment}\n\n象曰：${guaData.image}\n\n`;
+    if (userText.includes('爻辞')) {
+      response += `爻辞：\n${guaData.lines.join('\n')}\n\n`;
+    }
+    response += `《周易》断曰：${guaData.interpretation}`;
+    appendMsg('ai', response);
+    return;
+  }
+  
+  // ===== 情况2：需要AI深度解读（收费，扣次数）=====
+  if (needAIDeep) {
+    // 构建AI请求
+    let userQuestionForAI = userText;
+    let systemPrompt = cfg.systemPrompt;
+    let originalText = '';
+    
+    switch(currentDivineType) {
+      case 'liuyao':
+        if (hasGuaResult && guaData) {
+          originalText = `【卦象】${guaData.name}\n【卦辞】${guaData.judgment}\n【象曰】${guaData.image}\n【爻辞】${guaData.lines.join('；')}\n【古注】${guaData.interpretation}`;
+          userQuestionForAI = `【古籍原文】\n${originalText}\n\n【问主所问】${userText}\n\n请老夫依据上述古籍原文解卦。`;
+        } else {
+          userQuestionForAI = `【问主所问】${userText}\n\n请老夫为问主解惑。`;
+        }
+        break;
+      case 'dream':
+        const keyword = extractDreamKeyword(userText);
+        if (keyword && DREAM_EXPANDED[keyword]) {
+          const d = DREAM_EXPANDED[keyword];
+          originalText = `【梦境】${keyword}\n【梦兆】${d.desc}\n【吉凶】${d.jixiong}`;
+          userQuestionForAI = `【古籍原文】\n${originalText}\n\n【问主所问】用户梦见：${userText}\n\n请依据《周公解梦》原文解梦。`;
+        } else {
+          userQuestionForAI = `【问主所问】用户梦见：${userText}\n\n请依据《周公解梦》原文解梦。`;
+        }
+        break;
+      case 'qian':
+        // 随机取一签
+        const qianPool = Object.values(QIAN_100).filter(q => ['上上','上上签','上吉','大吉'].includes(q.type));
+        const qianData = qianPool[secureRandomIndex(qianPool.length)] || Object.values(QIAN_100)[0];
+        originalText = `【签号】${qianData.no}\n【签诗】${qianData.poem}\n【签解】${qianData.interpretation}`;
+        userQuestionForAI = `【古籍原文】\n${originalText}\n\n【问主所问】${userText}\n\n请依据关帝灵签原文解签。`;
+        break;
+      case 'bazi':
+        originalText = `【八字十神详解】\n${Object.entries(BAZI_DETAIL.tenGods).map(([k,v]) => `${k}: ${v}`).join('\n')}`;
+        userQuestionForAI = `【古籍参考】\n${originalText}\n\n【问主所问】${userText}\n\n请以八字大师身份回答，引用《三命通会》原文。`;
+        break;
+      case 'name':
+        originalText = `【五格数理详解】\n${Object.entries(NAME_DETAIL.numbers).map(([k,v]) => `${k}数: ${v}`).join('\n')}`;
+        userQuestionForAI = `【古籍参考】\n${originalText}\n\n【问主所问】${userText}\n\n请以姓名学大师身份回答，引用《姓名学全书》原文。`;
+        break;
+      case 'fengshui':
+        originalText = `【八方吉凶详解】\n${Object.entries(FENGSHUI_DETAIL.directions).map(([k,v]) => `${k}: ${v}`).join('\n')}`;
+        userQuestionForAI = `【古籍参考】\n${originalText}\n\n【问主所问】${userText}\n\n请以风水大师身份回答，引用《阳宅三要》原文。`;
+        break;
+    }
+    
+    conversationHistory.push({ role: 'user', content: userQuestionForAI });
+    const loadingId = 'loading-' + Date.now();
+    appendTyping(loadingId);
+    isLoading = true;
+    document.getElementById('send-btn').disabled = true;
+    
+    try {
+      const response = await fetch(API_BASE + '/api/public/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: getUserId(),
+          system_prompt: systemPrompt,
+          messages: conversationHistory.slice(-5),
+          max_tokens: 1500,
+          temperature: 0.8
+        })
+      });
+      const loadingEl = document.getElementById(loadingId);
+      if (loadingEl) loadingEl.closest('.msg')?.remove();
+      if (!response.ok) {
+        const err = await response.json().catch(()=>({}));
+        throw new Error(err.msg || err.error?.message || `HTTP ${response.status}`);
+      }
+      const aiMsgId = 'ai-msg-' + Date.now();
+      appendMsg('ai', '', aiMsgId);
+      const bubble = document.getElementById(aiMsgId);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try { 
+            const parsed = JSON.parse(data); 
+            const delta = parsed.choices?.[0]?.delta?.content; 
+            if (delta) { 
+              fullText += delta; 
+              bubble.innerHTML = formatAIText(fullText); 
+              scrollChatBottom(); 
+            } 
+          } catch {}
+        }
+      }
+      conversationHistory.push({ role: 'assistant', content: fullText });
+    } catch (err) {
+      const loadingEl = document.getElementById(loadingId);
+      if (loadingEl) loadingEl.closest('.msg')?.remove();
+      let errMsg = err.message || '网络错误';
+      if (errMsg.includes('401')) {
+        errMsg = '后端 DeepSeek API Key 无效，请检查 .env';
+      } else if (errMsg.includes('402')) {
+        errMsg = 'DeepSeek API 余额不足，请前往 platform.deepseek.com 充值';
+      } else if (errMsg.includes('429')) {
+        errMsg = '请求过于频繁，请稍后再试';
+      }
+      await refreshUserPoints();
+      showToast(`调用失败。原因：${errMsg}`);
+      appendMsg('ai', `⚠ 大师暂时无法回应：${errMsg}\n\n请检查网络或稍后再试。`);
+    }
+    isLoading = false;
+    document.getElementById('send-btn').disabled = false;
+  }
+}
+
+function openApiModal() {
+  showToast('AI Key 已移到后端 .env，无需在网页设置');
+}
+
+function closeApiModal() {
+  document.getElementById('api-modal').classList.remove('open');
+}
+
+function saveApiKey() {
+  showToast('AI Key 已移到后端 .env，无需在网页设置');
+}
+function showToast(msg) { 
+  const t = document.getElementById('toast'); 
+  t.textContent = msg; 
+  t.classList.add('show'); 
+  clearTimeout(t._timer); 
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000); 
+}
+
+document.getElementById('api-modal').addEventListener('click', function(e) { 
+  if (e.target === this) closeApiModal(); 
+});
+
+// ========== 页面加载初始化 ==========
+window.addEventListener('load', () => {
+  userPoints = 0;
+  showPointsDisplay();
+  loadPublicSiteData().then(refreshUserPoints).catch(() => showToast('后端未启动：充值和次数同步暂不可用'));
+  setTimeout(() => showToast('提示：后端已接入 AI；如无法解读，请检查后端 .env 的 DEEPSEEK_API_KEY'), 1500);
+});
+
+function getStoredPoints() {
+  return 0;
+}
+</script>
+</body>
+</html>
