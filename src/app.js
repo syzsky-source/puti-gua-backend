@@ -32,13 +32,16 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
-app.get(['/admin', '/admin.html'], (req, res) => {
+function sendAdminPage(req, res) {
   res.setHeader(
     'Content-Security-Policy',
     "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.putiguaguan.fun http://127.0.0.1:3000"
   );
   return res.sendFile(path.resolve(process.cwd(), 'admin.html'));
-});
+}
+
+app.get('/admin', sendAdminPage);
+app.get('/admin.html', sendAdminPage);
 
 app.get('/health', async (req, res, next) => {
   try {
