@@ -42,9 +42,9 @@ async function insertPointLog(conn, { userId, delta, oldBalance, newBalance, sou
       [userId, delta, oldBalance, newBalance, source, refId, remark]
     );
   } catch (err) {
-    // 兼容已上线旧库：如果还没导入 user_point_logs 表，不影响核心加减次数。
-    if (err && (err.code === 'ER_NO_SUCH_TABLE' || err.code === 'ER_BAD_TABLE_ERROR')) return;
-    throw err;
+    // 流水日志只是辅助记录，不能影响用户次数的核心加减。
+    // 线上旧库可能没有 user_point_logs 表，或表存在但缺少 old_balance/new_balance/source/ref_id/remark 等新字段。
+    console.warn('[WARN] skip user_point_logs insert:', err.code || err.message);
   }
 }
 
