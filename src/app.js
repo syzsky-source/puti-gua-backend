@@ -12,29 +12,17 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
-function normalizeOrigin(origin) {
-  return String(origin || '').replace(/\/$/, '');
-}
+const corsOptions = {
+  // 后台接口仍然依赖 x-admin-token 鉴权；这里放开浏览器来源，避免后台页 POST 预检请求被拦截。
+  origin: true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'x-admin-token', 'Authorization'],
+  optionsSuccessStatus: 204
+};
 
-const allowAll = env.corsOrigin === '*';
-const allowList = env.corsOrigin.split(',').map(s => normalizeOrigin(s.trim())).filter(Boolean);
-const defaultAllowList = [
-  'https://api.putiguaguan.fun',
-  'https://putiguaguan.fun',
-  'http://127.0.0.1:3000',
-  'http://localhost:3000',
-  env.publicBaseUrl
-].map(normalizeOrigin).filter(Boolean);
-const allowedOrigins = new Set([...allowList, ...defaultAllowList]);
-
-app.use(cors({
-  origin(origin, cb) {
-    const normalized = normalizeOrigin(origin);
-    if (allowAll || !origin || allowedOrigins.has(normalized)) return cb(null, true);
-    return cb(new Error(`CORS 不允许来源：${origin}`));
-  },
-  credentials: true
-}));
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
@@ -48,7 +36,7 @@ app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 function sendAdminPage(req, res) {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.putiguaguan.fun https://putiguaguan.fun http://127.0.0.1:3000 http://localhost:3000"
+    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src *"
   );
   return res.sendFile(path.resolve(process.cwd(), 'admin.html'));
 }
