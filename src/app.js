@@ -12,12 +12,25 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
+function normalizeOrigin(origin) {
+  return String(origin || '').replace(/\/$/, '');
+}
+
 const allowAll = env.corsOrigin === '*';
-const allowList = env.corsOrigin.split(',').map(s => s.trim()).filter(Boolean);
+const allowList = env.corsOrigin.split(',').map(s => normalizeOrigin(s.trim())).filter(Boolean);
+const defaultAllowList = [
+  'https://api.putiguaguan.fun',
+  'https://putiguaguan.fun',
+  'http://127.0.0.1:3000',
+  'http://localhost:3000',
+  env.publicBaseUrl
+].map(normalizeOrigin).filter(Boolean);
+const allowedOrigins = new Set([...allowList, ...defaultAllowList]);
 
 app.use(cors({
   origin(origin, cb) {
-    if (allowAll || !origin || allowList.includes(origin)) return cb(null, true);
+    const normalized = normalizeOrigin(origin);
+    if (allowAll || !origin || allowedOrigins.has(normalized)) return cb(null, true);
     return cb(new Error(`CORS 不允许来源：${origin}`));
   },
   credentials: true
@@ -35,7 +48,7 @@ app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 function sendAdminPage(req, res) {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.putiguaguan.fun http://127.0.0.1:3000"
+    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.putiguaguan.fun https://putiguaguan.fun http://127.0.0.1:3000 http://localhost:3000"
   );
   return res.sendFile(path.resolve(process.cwd(), 'admin.html'));
 }
