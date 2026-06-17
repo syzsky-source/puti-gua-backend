@@ -4,10 +4,15 @@ USE puti_gua;
 CREATE TABLE IF NOT EXISTS users (
   id VARCHAR(128) PRIMARY KEY,
   nickname VARCHAR(100) NULL,
+  phone VARCHAR(30) NULL,
+  wechat VARCHAR(100) NULL,
   points_balance INT NOT NULL DEFAULT 0,
   total_paid DECIMAL(10,2) NOT NULL DEFAULT 0.00,
   created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL
+  updated_at DATETIME NOT NULL,
+  INDEX idx_users_phone (phone),
+  INDEX idx_users_wechat (wechat),
+  INDEX idx_users_updated_at (updated_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS products (
@@ -59,6 +64,21 @@ CREATE TABLE IF NOT EXISTS orders (
   INDEX idx_orders_created_at (created_at),
   CONSTRAINT fk_orders_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT fk_orders_product FOREIGN KEY (product_id) REFERENCES products(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS user_point_logs (
+  id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  user_id VARCHAR(128) NOT NULL,
+  delta INT NOT NULL,
+  old_balance INT NOT NULL,
+  new_balance INT NOT NULL,
+  source VARCHAR(50) NOT NULL DEFAULT 'manual',
+  ref_id VARCHAR(100) NULL,
+  remark VARCHAR(255) NULL,
+  created_at DATETIME NOT NULL,
+  INDEX idx_user_point_logs_user_id (user_id),
+  INDEX idx_user_point_logs_created_at (created_at),
+  CONSTRAINT fk_user_point_logs_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS ai_logs (
