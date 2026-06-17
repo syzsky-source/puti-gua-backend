@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>菩提卦馆后台 - 用户管理</title>
+  <title>菩提卦馆后台</title>
   <style>
-    :root { --bg:#f7f3ea; --card:#fffaf1; --white:#fff; --text:#2b2118; --muted:#7a6b5d; --line:#eadfce; --brand:#9a642f; --brand2:#b9823d; --danger:#b42318; --green:#157347; --shadow:0 16px 38px rgba(72,45,18,.12); }
+    :root { --bg:#f7f3ea; --card:#fffaf1; --white:#fff; --text:#2b2118; --muted:#7a6b5d; --line:#eadfce; --brand:#9a642f; --brand2:#b9823d; --danger:#b42318; --green:#157347; --blue:#255aa8; --shadow:0 16px 38px rgba(72,45,18,.12); }
     * { box-sizing:border-box; }
     body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif; background:radial-gradient(circle at top left,#fff7e4 0,var(--bg) 42%,#f2eadc 100%); color:var(--text); min-height:100vh; }
-    .app { max-width:1380px; margin:0 auto; padding:24px; }
+    .app { max-width:1480px; margin:0 auto; padding:24px; }
     .top { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:18px; }
     .brand { display:flex; align-items:center; gap:12px; }
     .logo { width:46px; height:46px; border-radius:15px; display:grid; place-items:center; color:#fff; font-size:24px; background:linear-gradient(135deg,#5d3519,#b47a39); box-shadow:var(--shadow); }
@@ -24,8 +24,12 @@
     .btn-small { padding:7px 10px; border-radius:10px; font-size:13px; }
     .btn-danger { background:linear-gradient(135deg,#a61b13,#d64635); }
     .btn-green { background:linear-gradient(135deg,#146c43,#2e9f62); }
+    .btn-blue { background:linear-gradient(135deg,#1f4f9a,#3f75c9); }
     .api { width:260px; } .token { width:230px; } .search { width:310px; }
     .token-status { color:var(--green); font-size:13px; align-self:center; min-width:92px; }
+    .tabs { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+    .tab { background:#fff; color:var(--brand); border:1px solid var(--line); box-shadow:var(--shadow); }
+    .tab.active { color:#fff; background:linear-gradient(135deg,var(--brand),var(--brand2)); border-color:transparent; }
     .cards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:16px; }
     .card { background:rgba(255,250,241,.9); border:1px solid var(--line); border-radius:18px; padding:18px; box-shadow:var(--shadow); }
     .label { color:var(--muted); font-size:13px; }
@@ -33,22 +37,27 @@
     .toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; background:rgba(255,250,241,.9); border:1px solid var(--line); border-radius:18px; padding:14px; box-shadow:var(--shadow); margin-bottom:14px; }
     .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
     .panel { background:rgba(255,255,255,.76); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:var(--shadow); }
+    .panel-section { display:none; }
+    .panel-section.active { display:block; }
     .table-wrap { overflow-x:auto; }
     table { width:100%; border-collapse:collapse; min-width:1120px; }
     th,td { padding:13px 14px; border-bottom:1px solid #f0e7d9; text-align:left; vertical-align:middle; font-size:14px; }
     th { background:#fff8eb; color:#6b4a2e; font-size:13px; white-space:nowrap; }
     tr:hover td { background:#fffaf1; }
+    a { color:var(--blue); text-decoration:none; }
+    a:hover { text-decoration:underline; }
     .mono { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12px; }
     .muted { color:var(--muted); }
     .points { font-weight:800; color:var(--brand); }
-    .pill { display:inline-flex; padding:4px 9px; border-radius:999px; background:#fff2cc; color:#8a5a00; font-size:12px; }
+    .pill { display:inline-flex; padding:4px 9px; border-radius:999px; background:#fff2cc; color:#8a5a00; font-size:12px; white-space:nowrap; }
     .pill.paid { background:#e8f6ee; color:var(--green); }
     .pill.cancelled { background:#f7e4e2; color:var(--danger); }
+    .pill.proof { background:#e9f1ff; color:var(--blue); }
     .empty { padding:40px; text-align:center; color:var(--muted); }
     .foot { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:14px; flex-wrap:wrap; }
     .drawer-mask { position:fixed; inset:0; background:rgba(31,23,15,.38); backdrop-filter:blur(4px); display:none; justify-content:flex-end; z-index:50; }
     .drawer-mask.show { display:flex; }
-    .drawer { width:min(720px,100%); height:100%; overflow-y:auto; background:#fffaf1; box-shadow:-20px 0 50px rgba(31,23,15,.22); padding:22px; }
+    .drawer { width:min(760px,100%); height:100%; overflow-y:auto; background:#fffaf1; box-shadow:-20px 0 50px rgba(31,23,15,.22); padding:22px; }
     .drawer-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px; }
     .drawer-title { font-size:20px; font-weight:800; margin:0; }
     .section { background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:14px; }
@@ -61,6 +70,7 @@
     .toast { position:fixed; right:22px; bottom:22px; background:#2b2118; color:#fff; padding:12px 15px; border-radius:12px; box-shadow:var(--shadow); display:none; z-index:80; max-width:70vw; }
     .toast.show { display:block; }
     .loading { opacity:.55; pointer-events:none; }
+    .nowrap { white-space:nowrap; }
     @media (max-width:900px) { .app{padding:16px}.top{align-items:flex-start;flex-direction:column}.login{width:100%;justify-content:flex-start}.api,.token,.search{width:100%}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:1fr}.adjust{grid-template-columns:1fr} }
   </style>
 </head>
@@ -69,7 +79,7 @@
     <div class="top">
       <div class="brand">
         <div class="logo">卦</div>
-        <div><h1>菩提卦馆后台</h1><div class="sub">用户管理 · 剩余次数 · 订单记录 · 手动加减次数</div></div>
+        <div><h1>菩提卦馆后台</h1><div class="sub">用户管理 · 订单管理 · 确认付款自动加次数 · 手动加减次数</div></div>
       </div>
       <div class="login">
         <input id="apiBaseInput" class="api" placeholder="API 地址，默认当前域名" />
@@ -80,26 +90,57 @@
       </div>
     </div>
 
+    <div class="tabs">
+      <button id="usersTabBtn" class="tab active">用户管理</button>
+      <button id="ordersTabBtn" class="tab">订单管理</button>
+    </div>
+
     <div class="cards">
-      <div class="card"><div class="label">用户总数</div><div id="totalUsers" class="value">-</div></div>
-      <div class="card"><div class="label">本页用户</div><div id="pageUsers" class="value">-</div></div>
-      <div class="card"><div class="label">本页剩余次数</div><div id="pagePoints" class="value">-</div></div>
-      <div class="card"><div class="label">本页付款金额</div><div id="pagePaid" class="value">-</div></div>
+      <div class="card"><div class="label" id="card1Label">用户总数</div><div id="card1Value" class="value">-</div></div>
+      <div class="card"><div class="label" id="card2Label">本页用户</div><div id="card2Value" class="value">-</div></div>
+      <div class="card"><div class="label" id="card3Label">本页剩余次数</div><div id="card3Value" class="value">-</div></div>
+      <div class="card"><div class="label" id="card4Label">本页付款金额</div><div id="card4Value" class="value">-</div></div>
     </div>
 
-    <div class="toolbar">
-      <div class="row">
-        <input id="keywordInput" class="search" placeholder="搜索用户ID / 昵称 / 手机 / 微信" />
-        <select id="pageSizeSelect"><option value="10">每页 10 条</option><option value="20" selected>每页 20 条</option><option value="50">每页 50 条</option><option value="100">每页 100 条</option></select>
-        <button id="searchBtn">搜索</button><button id="resetBtn" class="btn-light">重置</button>
+    <div id="usersSection" class="panel-section active">
+      <div class="toolbar">
+        <div class="row">
+          <input id="keywordInput" class="search" placeholder="搜索用户ID / 昵称 / 手机 / 微信" />
+          <select id="pageSizeSelect"><option value="10">每页 10 条</option><option value="20" selected>每页 20 条</option><option value="50">每页 50 条</option><option value="100">每页 100 条</option></select>
+          <button id="searchBtn">搜索</button><button id="resetBtn" class="btn-light">重置</button>
+        </div>
+        <button id="refreshBtn" class="btn-light">刷新</button>
       </div>
-      <button id="refreshBtn" class="btn-light">刷新</button>
+
+      <div id="tablePanel" class="panel">
+        <div class="table-wrap"><table><thead><tr><th>用户ID</th><th>昵称</th><th>手机</th><th>微信</th><th>剩余次数</th><th>累计付款</th><th>订单数</th><th>已付款订单</th><th>最近订单</th><th>更新时间</th><th>操作</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+        <div id="emptyState" class="empty" style="display:none;">暂无用户数据</div>
+        <div class="foot"><div id="pageInfo" class="muted">-</div><div class="row"><button id="prevBtn" class="btn-light btn-small">上一页</button><button id="nextBtn" class="btn-light btn-small">下一页</button></div></div>
+      </div>
     </div>
 
-    <div id="tablePanel" class="panel">
-      <div class="table-wrap"><table><thead><tr><th>用户ID</th><th>昵称</th><th>手机</th><th>微信</th><th>剩余次数</th><th>累计付款</th><th>订单数</th><th>已付款订单</th><th>最近订单</th><th>更新时间</th><th>操作</th></tr></thead><tbody id="usersBody"></tbody></table></div>
-      <div id="emptyState" class="empty" style="display:none;">暂无用户数据</div>
-      <div class="foot"><div id="pageInfo" class="muted">-</div><div class="row"><button id="prevBtn" class="btn-light btn-small">上一页</button><button id="nextBtn" class="btn-light btn-small">下一页</button></div></div>
+    <div id="ordersSection" class="panel-section">
+      <div class="toolbar">
+        <div class="row">
+          <select id="ordersStatusSelect">
+            <option value="">全部订单</option>
+            <option value="pending">待支付</option>
+            <option value="proof_uploaded">已上传截图</option>
+            <option value="paid">已确认付款</option>
+            <option value="cancelled">已取消</option>
+            <option value="refunded">已退款</option>
+          </select>
+          <button id="loadPendingOrdersBtn" class="btn-blue">只看待处理</button>
+          <button id="ordersRefreshBtn" class="btn-light">刷新订单</button>
+        </div>
+        <div class="muted">确认订单后，系统会自动给对应用户增加套餐次数。</div>
+      </div>
+
+      <div id="ordersPanel" class="panel">
+        <div class="table-wrap"><table style="min-width:1320px;"><thead><tr><th>订单ID</th><th>用户ID</th><th>商品</th><th>金额</th><th>次数</th><th>状态</th><th>付款截图</th><th>创建时间</th><th>确认时间</th><th>操作</th></tr></thead><tbody id="adminOrdersBody"></tbody></table></div>
+        <div id="adminOrdersEmpty" class="empty" style="display:none;">暂无订单</div>
+        <div class="foot"><div id="ordersInfo" class="muted">-</div><div class="row"><button id="ordersAllBtn" class="btn-light btn-small">全部</button><button id="ordersTodoBtn" class="btn-light btn-small">待处理</button></div></div>
+      </div>
     </div>
   </div>
 
@@ -108,7 +149,7 @@
       <div class="drawer-head"><div><p class="drawer-title">用户详情</p><div id="drawerUserId" class="mono muted"></div></div><button id="closeDrawerBtn" class="btn-light">关闭</button></div>
       <div class="section"><h3>基础信息</h3><div id="userDetailBox" class="grid"></div></div>
       <div class="section"><h3>手动加减次数</h3><div class="adjust"><input id="pointsInput" type="number" step="1" placeholder="如 5 或 -3" /><input id="reasonInput" placeholder="备注，例如：后台手动补次数" /><button id="addBtn" class="btn-green">加次数</button><button id="minusBtn" class="btn-danger">减次数</button></div><div class="muted" style="margin-top:10px;font-size:13px;">也可以在左边直接输入正数或负数；点击按钮时会自动转换方向。扣减后最低为 0。</div></div>
-      <div class="section"><div class="row" style="justify-content:space-between;margin-bottom:10px;"><h3 style="margin:0;">订单记录</h3><select id="orderStatusSelect"><option value="">全部状态</option><option value="pending">待支付</option><option value="proof_uploaded">已上传截图</option><option value="paid">已确认付款</option><option value="cancelled">已取消</option><option value="refunded">已退款</option></select></div><div class="table-wrap"><table style="min-width:660px;"><thead><tr><th>订单ID</th><th>商品</th><th>金额</th><th>次数</th><th>状态</th><th>创建时间</th></tr></thead><tbody id="ordersBody"></tbody></table></div><div id="ordersEmpty" class="empty" style="display:none;">该用户暂无订单</div></div>
+      <div class="section"><div class="row" style="justify-content:space-between;margin-bottom:10px;"><h3 style="margin:0;">订单记录</h3><select id="orderStatusSelect"><option value="">全部状态</option><option value="pending">待支付</option><option value="proof_uploaded">已上传截图</option><option value="paid">已确认付款</option><option value="cancelled">已取消</option><option value="refunded">已退款</option></select></div><div class="table-wrap"><table style="min-width:760px;"><thead><tr><th>订单ID</th><th>商品</th><th>金额</th><th>次数</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody id="ordersBody"></tbody></table></div><div id="ordersEmpty" class="empty" style="display:none;">该用户暂无订单</div></div>
     </div>
   </div>
   <div id="toast" class="toast"></div>
@@ -116,19 +157,20 @@
   <script>
     const STORAGE_API_KEY = 'puti_admin_api_base';
     const SESSION_TOKEN_KEY = 'puti_admin_token_session';
-    const state = { page:1, pageSize:20, total:0, keyword:'', selectedUserId:'', users:[] };
+    const state = { view:'users', page:1, pageSize:20, total:0, keyword:'', selectedUserId:'', users:[], orders:[], orderStatus:'' };
     const $ = (id) => document.getElementById(id);
 
     function getApiBase() { return ($('apiBaseInput').value || localStorage.getItem(STORAGE_API_KEY) || location.origin).replace(/\/$/, ''); }
     function getToken() { return sessionStorage.getItem(SESSION_TOKEN_KEY) || ''; }
     function updateTokenStatus() { $('tokenStatus').textContent = getToken() ? 'Token 已保存' : ''; }
-    function toast(msg) { const el=$('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2600); }
-    function setLoading(v) { $('tablePanel').classList.toggle('loading', v); }
+    function toast(msg) { const el=$('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2800); }
+    function setLoading(v) { if (state.view === 'users') $('tablePanel').classList.toggle('loading', v); else $('ordersPanel').classList.toggle('loading', v); }
     function escapeHtml(value) { return String(value ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
     function fmtDate(value) { if(!value) return '-'; const d=new Date(value); return Number.isNaN(d.getTime()) ? String(value) : d.toLocaleString('zh-CN',{hour12:false}); }
     function fmtMoney(value) { return '¥' + Number(value || 0).toFixed(2); }
     function statusText(s) { return ({pending:'待支付',proof_uploaded:'已上传截图',paid:'已确认付款',cancelled:'已取消',refunded:'已退款'}[s] || s || '-'); }
-    function statusClass(s) { if(s==='paid') return 'paid'; if(s==='cancelled'||s==='refunded') return 'cancelled'; return ''; }
+    function statusClass(s) { if(s==='paid') return 'paid'; if(s==='cancelled'||s==='refunded') return 'cancelled'; if(s==='proof_uploaded') return 'proof'; return ''; }
+    function isConfirmable(order) { return order && order.status !== 'paid' && order.status !== 'cancelled' && order.status !== 'refunded'; }
 
     async function api(path, options={}) {
       const token = getToken();
@@ -141,6 +183,15 @@
       try { payload = text ? JSON.parse(text) : {}; } catch (_) { payload = { code: res.status, msg: text || res.statusText }; }
       if (!res.ok || payload.code !== 0) throw new Error(payload.msg || `请求失败：${res.status}`);
       return payload.data;
+    }
+
+    function switchView(view) {
+      state.view = view;
+      $('usersTabBtn').classList.toggle('active', view === 'users');
+      $('ordersTabBtn').classList.toggle('active', view === 'orders');
+      $('usersSection').classList.toggle('active', view === 'users');
+      $('ordersSection').classList.toggle('active', view === 'orders');
+      if (view === 'users') loadUsers(); else loadOrders();
     }
 
     async function loadUsers() {
@@ -163,10 +214,77 @@
       $('pageInfo').textContent = `第 ${state.page} / ${totalPages} 页，共 ${state.total} 个用户`;
       $('prevBtn').disabled = state.page <= 1;
       $('nextBtn').disabled = state.page >= totalPages;
-      $('totalUsers').textContent = state.total;
-      $('pageUsers').textContent = rows.length;
-      $('pagePoints').textContent = rows.reduce((sum,u)=>sum+Number(u.points_balance||0),0);
-      $('pagePaid').textContent = fmtMoney(rows.reduce((sum,u)=>sum+Number(u.paid_amount || u.total_paid || 0),0));
+      $('card1Label').textContent = '用户总数'; $('card1Value').textContent = state.total;
+      $('card2Label').textContent = '本页用户'; $('card2Value').textContent = rows.length;
+      $('card3Label').textContent = '本页剩余次数'; $('card3Value').textContent = rows.reduce((sum,u)=>sum+Number(u.points_balance||0),0);
+      $('card4Label').textContent = '本页付款金额'; $('card4Value').textContent = fmtMoney(rows.reduce((sum,u)=>sum+Number(u.paid_amount || u.total_paid || 0),0));
+    }
+
+    async function loadOrders(statusOverride) {
+      try {
+        setLoading(true);
+        if (typeof statusOverride === 'string') {
+          state.orderStatus = statusOverride;
+          $('ordersStatusSelect').value = statusOverride;
+        } else {
+          state.orderStatus = $('ordersStatusSelect').value;
+        }
+        const qs = new URLSearchParams();
+        if (state.orderStatus) qs.set('status', state.orderStatus);
+        const data = await api('/api/admin/orders' + (qs.toString() ? '?' + qs.toString() : ''));
+        state.orders = Array.isArray(data) ? data : (data.list || []);
+        renderAdminOrders();
+      } catch (err) { toast(err.message); } finally { setLoading(false); }
+    }
+
+    function proofLink(order) {
+      const url = order.proof_image_url || order.proof_url || order.payment_proof_url || '';
+      if (!url) return '-';
+      const href = /^https?:\/\//.test(url) ? url : getApiBase() + url;
+      return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener">查看截图</a>`;
+    }
+
+    function renderAdminOrders() {
+      const rows = state.orders;
+      $('adminOrdersBody').innerHTML = rows.map(o => {
+        const canConfirm = isConfirmable(o);
+        const userBtn = `<button class="btn-small btn-light" data-open-user="${escapeHtml(o.user_id)}">看用户</button>`;
+        const confirmBtn = canConfirm ? `<button class="btn-small btn-green" data-confirm-order="${escapeHtml(o.id)}">确认付款并加次数</button>` : `<span class="muted">已处理</span>`;
+        const cancelBtn = (o.status === 'pending' || o.status === 'proof_uploaded') ? `<button class="btn-small btn-danger" data-cancel-order="${escapeHtml(o.id)}">取消</button>` : '';
+        return `<tr><td class="mono">${escapeHtml(o.id)}</td><td class="mono">${escapeHtml(o.user_id)}</td><td>${escapeHtml(o.product_name || o.product_id || '-')}</td><td>${fmtMoney(o.amount)}</td><td><span class="points">${Number(o.points_count || 0)}</span></td><td><span class="pill ${statusClass(o.status)}">${statusText(o.status)}</span></td><td>${proofLink(o)}</td><td>${fmtDate(o.created_at)}</td><td>${fmtDate(o.confirmed_at || o.paid_at)}</td><td><div class="row nowrap">${userBtn}${confirmBtn}${cancelBtn}</div></td></tr>`;
+      }).join('');
+      $('adminOrdersEmpty').style.display = rows.length ? 'none' : 'block';
+      const todo = rows.filter(isConfirmable).length;
+      const paid = rows.filter(o => o.status === 'paid').length;
+      const amount = rows.filter(o => o.status === 'paid').reduce((sum,o)=>sum+Number(o.amount||0),0);
+      $('ordersInfo').textContent = `当前显示 ${rows.length} 笔订单，待处理 ${todo} 笔`;
+      $('card1Label').textContent = '当前订单数'; $('card1Value').textContent = rows.length;
+      $('card2Label').textContent = '待处理订单'; $('card2Value').textContent = todo;
+      $('card3Label').textContent = '已确认订单'; $('card3Value').textContent = paid;
+      $('card4Label').textContent = '已确认金额'; $('card4Value').textContent = fmtMoney(amount);
+    }
+
+    async function confirmOrder(orderId) {
+      const order = state.orders.find(o => String(o.id) === String(orderId));
+      const message = order ? `确认这笔订单已到账？\n\n用户：${order.user_id}\n套餐：${order.product_name || order.product_id}\n金额：${fmtMoney(order.amount)}\n增加次数：${Number(order.points_count || 0)}\n\n确认后系统会自动给该用户加次数。` : '确认这笔订单已到账并自动加次数？';
+      if (!confirm(message)) return;
+      try {
+        const data = await api('/api/admin/orders/' + encodeURIComponent(orderId) + '/confirm', { method:'POST' });
+        toast(`订单已确认，已自动增加 ${Number(data.added_points || 0)} 次`);
+        await loadOrders();
+        if (state.selectedUserId) await openUser(state.selectedUserId);
+        if (state.view === 'users') await loadUsers();
+      } catch (err) { toast(err.message); }
+    }
+
+    async function cancelOrder(orderId) {
+      if (!confirm('确认取消这笔订单？取消后不会加次数。')) return;
+      try {
+        await api('/api/admin/orders/' + encodeURIComponent(orderId) + '/cancel', { method:'POST' });
+        toast('订单已取消');
+        await loadOrders();
+        if (state.selectedUserId) await openUser(state.selectedUserId);
+      } catch (err) { toast(err.message); }
     }
 
     async function openUser(userId) {
@@ -191,7 +309,10 @@
       $('userDetailBox').innerHTML = [kv('用户ID',u.id),kv('昵称',u.nickname||'-'),kv('手机',u.phone||'-'),kv('微信',u.wechat||'-'),kv('剩余次数',Number(u.points_balance||0)),kv('累计付款',fmtMoney(u.total_paid)),kv('总订单数',Number(s.total_orders||0)),kv('已付款订单',Number(s.paid_orders||0)),kv('待支付订单',Number(s.pending_orders||0)),kv('上传截图订单',Number(s.proof_uploaded_orders||0)),kv('创建时间',fmtDate(u.created_at)),kv('更新时间',fmtDate(u.updated_at))].join('');
     }
     function renderOrders(orders) {
-      $('ordersBody').innerHTML = orders.map(o => `<tr><td class="mono">${escapeHtml(o.id)}</td><td>${escapeHtml(o.product_name || o.product_id || '-')}</td><td>${fmtMoney(o.amount)}</td><td>${Number(o.points_count || 0)}</td><td><span class="pill ${statusClass(o.status)}">${statusText(o.status)}</span></td><td>${fmtDate(o.created_at)}</td></tr>`).join('');
+      $('ordersBody').innerHTML = orders.map(o => {
+        const confirmBtn = isConfirmable(o) ? `<button class="btn-small btn-green" data-confirm-order="${escapeHtml(o.id)}">确认加次数</button>` : `<span class="muted">已处理</span>`;
+        return `<tr><td class="mono">${escapeHtml(o.id)}</td><td>${escapeHtml(o.product_name || o.product_id || '-')}</td><td>${fmtMoney(o.amount)}</td><td>${Number(o.points_count || 0)}</td><td><span class="pill ${statusClass(o.status)}">${statusText(o.status)}</span></td><td>${fmtDate(o.created_at)}</td><td>${confirmBtn}</td></tr>`;
+      }).join('');
       $('ordersEmpty').style.display = orders.length ? 'none' : 'block';
     }
     async function loadUserOrders() {
@@ -219,7 +340,7 @@
         const data = await api('/api/admin/users/' + encodeURIComponent(userId) + '/points', { method:'POST', body:JSON.stringify({ points, reason }) });
         toast(`操作成功，当前剩余 ${data.points_balance} 次`);
         await openUser(userId);
-        await loadUsers();
+        if (state.view === 'users') await loadUsers();
       } catch (err) { toast(err.message); } finally { $('addBtn').disabled = false; $('minusBtn').disabled = false; }
     }
 
@@ -233,7 +354,7 @@
         $('tokenInput').placeholder = 'ADMIN_TOKEN 已保存';
         updateTokenStatus();
         toast('已保存，输入框已自动清空');
-        loadUsers();
+        if (state.view === 'users') loadUsers(); else loadOrders();
       });
       $('clearTokenBtn').addEventListener('click', () => {
         sessionStorage.removeItem(SESSION_TOKEN_KEY);
@@ -243,6 +364,8 @@
         updateTokenStatus();
         toast('已清除 Token');
       });
+      $('usersTabBtn').addEventListener('click', () => switchView('users'));
+      $('ordersTabBtn').addEventListener('click', () => switchView('orders'));
       $('searchBtn').addEventListener('click', () => { state.page=1; state.keyword=$('keywordInput').value.trim(); state.pageSize=Number($('pageSizeSelect').value); loadUsers(); });
       $('resetBtn').addEventListener('click', () => { $('keywordInput').value=''; state.keyword=''; state.page=1; loadUsers(); });
       $('refreshBtn').addEventListener('click', loadUsers);
@@ -256,6 +379,19 @@
       $('addBtn').addEventListener('click', () => adjustPoints('add'));
       $('minusBtn').addEventListener('click', () => adjustPoints('minus'));
       $('orderStatusSelect').addEventListener('change', loadUserOrders);
+      $('ordersStatusSelect').addEventListener('change', () => loadOrders());
+      $('ordersRefreshBtn').addEventListener('click', () => loadOrders());
+      $('loadPendingOrdersBtn').addEventListener('click', () => loadOrders('proof_uploaded'));
+      $('ordersAllBtn').addEventListener('click', () => loadOrders(''));
+      $('ordersTodoBtn').addEventListener('click', () => loadOrders('proof_uploaded'));
+      document.body.addEventListener('click', e => {
+        const confirmBtn = e.target.closest('[data-confirm-order]');
+        if (confirmBtn) return confirmOrder(confirmBtn.dataset.confirmOrder);
+        const cancelBtn = e.target.closest('[data-cancel-order]');
+        if (cancelBtn) return cancelOrder(cancelBtn.dataset.cancelOrder);
+        const userBtn = e.target.closest('[data-open-user]');
+        if (userBtn) return openUser(userBtn.dataset.openUser);
+      });
     }
 
     function init() {
