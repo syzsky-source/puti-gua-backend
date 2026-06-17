@@ -1,6 +1,5 @@
 const path = require('path');
 const express = require('express');
-const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const env = require('./config/env');
@@ -12,17 +11,27 @@ const { notFound, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 
-const corsOptions = {
-  // 后台接口仍然依赖 x-admin-token 鉴权；这里放开浏览器来源，避免后台页 POST 预检请求被拦截。
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'x-admin-token', 'Authorization'],
-  optionsSuccessStatus: 204
-};
+// 后台接口仍然依赖 x-admin-token 鉴权；CORS 不再限制浏览器来源，避免 POST 预检请求被拦截。
+// OPTIONS 预检请求必须在进入后台鉴权和业务路由前直接返回。
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+  if (origin) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-token, Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  return next();
+});
 
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'cross-origin' }
