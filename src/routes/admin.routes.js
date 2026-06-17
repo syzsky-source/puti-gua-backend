@@ -1,5 +1,6 @@
 const express = require('express');
 const { adminAuth } = require('../middleware/adminAuth');
+const { upload } = require('../middleware/upload');
 const ctrl = require('../controllers/adminController');
 
 const router = express.Router();
@@ -25,6 +26,7 @@ router.post('/products', ctrl.saveProduct);
 router.patch('/products/:productId', ctrl.saveProduct);
 
 router.get('/qrcodes', ctrl.listQrCodes);
+router.post('/qrcodes/upload', upload.single('image'), ctrl.uploadQrCodeImage);
 router.post('/qrcodes', ctrl.saveQrCode);
 router.patch('/qrcodes/:qrcodeId', ctrl.saveQrCode);
 router.post('/qrcodes/:qrcodeId/active', ctrl.activateQrCode);
