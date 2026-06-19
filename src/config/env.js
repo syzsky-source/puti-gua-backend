@@ -22,7 +22,8 @@ module.exports = {
     baseUrl: (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/$/, ''),
     model: process.env.DEEPSEEK_MODEL || 'deepseek-chat'
   },
-  freePoints: toNumber(process.env.FREE_POINTS, 3),
+  // 新用户首次进入默认赠送 1 次；可通过服务器 .env 的 FREE_POINTS 覆盖。
+  freePoints: toNumber(process.env.FREE_POINTS, 1),
   publicBaseUrl: (process.env.PUBLIC_BASE_URL || 'http://localhost:3000').replace(/\/$/, ''),
   uploadDir: process.env.UPLOAD_DIR || 'uploads/payment_proofs',
   adminToken: process.env.ADMIN_TOKEN || '',
