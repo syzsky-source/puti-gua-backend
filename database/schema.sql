@@ -110,11 +110,12 @@ CREATE TABLE IF NOT EXISTS admin_users (
   updated_at DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 正式三档套餐：10次 / 19.90，30次 / 29.90，100次 / 69.90。
 INSERT INTO products (id, name, emoji, price, points_count, description, sort_order, is_active, created_at, updated_at)
 VALUES
-('p_19_30', '30次问卦', '📿', 19.90, 30, '常用体验套餐', 1, 1, NOW(), NOW()),
-('p_29_50', '50次问卦', '🔮', 29.90, 50, '进阶常用套餐', 2, 1, NOW(), NOW()),
-('p_69_150', '150次问卦', '🏮', 69.90, 150, '长期使用套餐', 3, 1, NOW(), NOW())
+('p_9_10', '10次问卦', '📿', 19.90, 10, '入门体验套餐', 1, 1, NOW(), NOW()),
+('p_19_30', '30次问卦', '🔮', 29.90, 30, '常用体验套餐', 2, 1, NOW(), NOW()),
+('p_49_100', '100次问卦', '🏮', 69.90, 100, '长期使用套餐', 3, 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE
 name = VALUES(name), emoji = VALUES(emoji), price = VALUES(price), points_count = VALUES(points_count),
 description = VALUES(description), sort_order = VALUES(sort_order), is_active = VALUES(is_active), updated_at = NOW();
@@ -128,6 +129,6 @@ ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), remark = VALUES(r
 
 INSERT INTO qrcodes (name, account_name, image_url, remark, product_id, amount, is_active, created_at, updated_at)
 VALUES
-('19.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_19_90.jpg', '自动匹配19.90套餐', 'p_19_30', 19.90, 1, NOW(), NOW()),
-('29.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_29_90.jpg', '自动匹配29.90套餐', 'p_29_50', 29.90, 1, NOW(), NOW()),
-('69.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_69_90.jpg', '自动匹配69.90套餐', 'p_69_150', 69.90, 1, NOW(), NOW());
+('19.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_19_90.jpg', '自动匹配10次问卦套餐', 'p_9_10', 19.90, 1, NOW(), NOW()),
+('29.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_29_90.jpg', '自动匹配30次问卦套餐', 'p_19_30', 29.90, 1, NOW(), NOW()),
+('69.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_69_90.jpg', '自动匹配100次问卦套餐', 'p_49_100', 69.90, 1, NOW(), NOW());
