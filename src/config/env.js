@@ -1,4 +1,5 @@
-require('dotenv').config();
+// 以项目 .env 为准，避免 PM2 旧环境变量覆盖新的站点配置。
+require('dotenv').config({ override: true });
 
 const toNumber = (value, fallback) => {
   const n = Number(value);
@@ -22,7 +23,7 @@ module.exports = {
     baseUrl: (process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/$/, ''),
     model: process.env.DEEPSEEK_MODEL || 'deepseek-chat'
   },
-  // 新用户首次进入默认赠送 1 次；可通过服务器 .env 的 FREE_POINTS 覆盖。
+  // 新用户首次进入默认赠送 1 次；服务器 .env 中 FREE_POINTS 可调整。
   freePoints: toNumber(process.env.FREE_POINTS, 1),
   publicBaseUrl: (process.env.PUBLIC_BASE_URL || 'http://localhost:3000').replace(/\/$/, ''),
   uploadDir: process.env.UPLOAD_DIR || 'uploads/payment_proofs',
