@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>菩提卦馆 · 古法算卦</title>
+<title>菩提苑 · 为家人祈福求灵签</title>
 <style>
 /* ========== 完整样式（与你原版一致） ========== */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap');
@@ -221,7 +221,7 @@ main {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  max-width: 720px;
+  max-width: 960px;
   width: 100%;
   margin-bottom: 48px;
 }
@@ -230,7 +230,7 @@ main {
   background: rgba(245,237,216,0.04);
   border: 1px solid rgba(200,150,42,0.2);
   border-radius: 4px;
-  padding: 24px 16px 20px;
+  padding: 22px 14px 18px;
   text-align: center;
   cursor: pointer;
   transition: all .25s;
@@ -901,16 +901,16 @@ main {
 <header>
   <div class="header-logo" onclick="showScreen('home')">
     <div class="logo-seal">☯</div>
-    <h1>菩提卦馆</h1>
+    <h1>菩提苑</h1>
   </div>
   <nav class="main-nav">
     <span class="nav-link active" onclick="showScreen('home')">首页</span>
-    <span class="nav-link" onclick="startDivine('六爻占卜','liuyao')">六爻占卜</span>
-    <span class="nav-link" onclick="startDivine('周公解梦','dream')">周公解梦</span>
-    <span class="nav-link" onclick="startDivine('关帝灵签','qian')">关帝灵签</span>
-    <span class="nav-link" onclick="startDivine('八字命盘','bazi')">八字命盘</span>
-    <span class="nav-link" onclick="startDivine('姓名测算','name')">姓名测算</span>
-    <span class="nav-link" onclick="startDivine('风水问答','fengshui')">风水问答</span>
+    <span class="nav-link" onclick="startDivine('为家人祈福','pray')">祈福</span>
+    <span class="nav-link" onclick="startDivine('今日黄历','almanac')">黄历</span>
+    <span class="nav-link" onclick="startDivine('关帝灵签','qian')">灵签</span>
+    <span class="nav-link" onclick="startDivine('八字精批','bazi')">八字</span>
+    <span class="nav-link" onclick="startDivine('周公解梦','dream')">解梦</span>
+    <span class="nav-link" onclick="startDivine('六爻占卜','liuyao')">六爻</span>
     <span class="nav-link" onclick="showScreen('about')">关于</span>
   </nav>
   <button class="api-key-btn" style="display:none" aria-hidden="true">AI 已由后端接入</button>
@@ -927,18 +927,21 @@ main {
         <div class="gua-circle"></div>
         <div class="gua-symbols" id="gua-symbols"></div>
       </div>
-      <p class="hero-eyebrow">古法 · 问卦 · 解惑</p>
-      <h2 class="hero-title"><span class="gold-char">菩</span>提<span class="gold-char">卦</span>馆</h2>
-      <p class="hero-subtitle">蒸古籍于 AI · 问天地之玄机</p>
+      <p class="hero-eyebrow">以古籍为根 · 以师父为引</p>
+      <h2 class="hero-title"><span class="gold-char">菩</span>提<span class="gold-char">苑</span></h2>
+      <p class="hero-subtitle">为家人祈福 · 求灵签 · 看八字</p>
       <div class="gua-grid">
-        <div class="gua-card" onclick="startDivine('六爻占卜','liuyao')"><span class="gua-card-icon">☯</span><div class="gua-card-name">六爻占卜</div><div class="gua-card-desc">摇三枚铜钱，起六爻卦象</div><span class="gua-card-tag">最灵验</span></div>
-        <div class="gua-card" onclick="startDivine('周公解梦','dream')"><span class="gua-card-icon">🌙</span><div class="gua-card-name">周公解梦</div><div class="gua-card-desc">描述梦境，探寻吉凶征兆</div><span class="gua-card-tag free">免摇卦</span></div>
-        <div class="gua-card" onclick="startDivine('关帝灵签','qian')"><span class="gua-card-icon">🏮</span><div class="gua-card-name">关帝灵签</div><div class="gua-card-desc">百签解惑，忠义护佑</div><span class="gua-card-tag">签到即灵</span></div>
-        <div class="gua-card" onclick="startDivine('八字命盘','bazi')"><span class="gua-card-icon">📿</span><div class="gua-card-name">八字命盘</div><div class="gua-card-desc">生辰八字，推算命运格局</div><span class="gua-card-tag">需生辰</span></div>
-        <div class="gua-card" onclick="startDivine('姓名测算','name')"><span class="gua-card-icon">🖊️</span><div class="gua-card-name">姓名测算</div><div class="gua-card-desc">五格数理，测名字吉凶</div><span class="gua-card-tag free">免摇卦</span></div>
-        <div class="gua-card" onclick="startDivine('风水问答','fengshui')"><span class="gua-card-icon">🗻</span><div class="gua-card-name">风水问答</div><div class="gua-card-desc">居家方位，趋吉避凶之道</div><span class="gua-card-tag free">直接问</span></div>
+        <div class="gua-card" onclick="startDivine('为家人祈福','pray')"><span class="gua-card-icon">🪔</span><div class="gua-card-name">为家人祈福</div><div class="gua-card-desc">点一盏灯，挂家人姓名</div><span class="gua-card-tag">9.9元起</span></div>
+        <div class="gua-card" onclick="startDivine('今日黄历','almanac')"><span class="gua-card-icon">📅</span><div class="gua-card-name">今日黄历</div><div class="gua-card-desc">干支宜忌、神煞冲煞</div><span class="gua-card-tag free">每日打卡</span></div>
+        <div class="gua-card" onclick="startDivine('周公解梦','dream')"><span class="gua-card-icon">🌙</span><div class="gua-card-name">周公解梦</div><div class="gua-card-desc">百梦皆有意，古今相参证</div><span class="gua-card-tag free">新增</span></div>
+        <div class="gua-card" onclick="startDivine('关帝灵签','qian')"><span class="gua-card-icon">🏮</span><div class="gua-card-name">关帝灵签</div><div class="gua-card-desc">心诚则灵，一签一事</div><span class="gua-card-tag">传统签谱</span></div>
+        <div class="gua-card" onclick="startDivine('八字精批','bazi')"><span class="gua-card-icon">📿</span><div class="gua-card-name">八字精批</div><div class="gua-card-desc">真排盘，看一生气运起伏</div><span class="gua-card-tag">传家技艺</span></div>
+        <div class="gua-card" onclick="startDivine('六爻占卜','liuyao')"><span class="gua-card-icon">☯</span><div class="gua-card-name">六爻占卜</div><div class="gua-card-desc">三铜起卦，观爻象之变</div><span class="gua-card-tag">周易卦例</span></div>
+        <div class="gua-card" onclick="startDivine('手相 / 面相','palm')"><span class="gua-card-icon">🖐️</span><div class="gua-card-name">手相 / 面相</div><div class="gua-card-desc">上传掌心照或正脸照详批</div><span class="gua-card-tag free">图解</span></div>
+        <div class="gua-card" onclick="startDivine('宝宝起名','name')"><span class="gua-card-icon">🖊️</span><div class="gua-card-name">宝宝起名</div><div class="gua-card-desc">八字喜忌、音韵笔画、典故诗词</div><span class="gua-card-tag">传家</span></div>
+        <div class="gua-card" onclick="startDivine('静心禅坐','meditation')"><span class="gua-card-icon">🧘</span><div class="gua-card-name">静心禅坐</div><div class="gua-card-desc">钟磬古乐、佛号梵音、深山溪水</div><span class="gua-card-tag free">新增</span></div>
       </div>
-      <p class="hero-quote"><em>「</em> 善易者不卜，善卜者不疑 <em>」</em></p>
+      <p class="hero-quote"><em>「</em> 命自我立，福自我求；诸恶莫作，众善奉行 <em>」</em></p>
     </div>
   </div>
 
@@ -964,9 +967,9 @@ main {
   <!-- ══ 关于页 ══ -->
   <div id="screen-about" class="screen">
     <div class="about-wrap">
-      <div class="about-section"><div class="section-eyebrow">关于菩提卦馆</div><div class="section-title">古籍蒸馏，AI 问卦</div><p class="about-text">菩提卦馆以<strong>《周易》《增删卜易》《卜筮正宗》《周公解梦》《关帝灵签》《三命通会》《姓名学全书》《阳宅三要》</strong>等数十部古典术数典籍为根基，借助 DeepSeek 大模型的深度学习能力，将千年古法融入现代对话之中。<br><br>这里没有模糊的套话，每一次问卦都基于真实的古籍原文。无论是<strong>六爻占卜、周公解梦、关帝灵签</strong>，还是<strong>八字命盘、姓名测算、风水问答</strong>，玄鉴先生皆能旁征博引，为您指点吉凶。</p></div>
+      <div class="about-section"><div class="section-eyebrow">关于菩提苑</div><div class="section-title">古籍为根，师父开示</div><p class="about-text">菩提苑参考站点产品结构，围绕<strong>为家人祈福、今日黄历、周公解梦、关帝灵签、八字精批、六爻占卜、手相 / 面相、宝宝起名、静心禅坐</strong>九大善门组织服务。<br><br>内容以《周易》《关帝灵签》《周公解梦》《渊海子平》《三命通会》《滴天髓》等传统典籍为根，借助 DeepSeek 大模型生成师父式开示，帮助用户以现代对话方式理解传统文化。</p></div>
       <div class="divider"></div>
-      <div class="about-section"><div class="section-eyebrow">典籍基础</div><div class="section-title">蒸馏自古籍</div><div class="classics-grid"><div class="classic-card"><div class="c-icon">📜</div><div class="c-name">周易 · 易经</div><div class="c-desc">六十四卦，三百八十四爻</div></div><div class="classic-card"><div class="c-icon">📖</div><div class="c-name">增删卜易</div><div class="c-desc">六爻断卦第一参考</div></div><div class="classic-card"><div class="c-icon">🔮</div><div class="c-name">卜筮正宗</div><div class="c-desc">六爻入门经典</div></div><div class="classic-card"><div class="c-icon">🌙</div><div class="c-name">周公解梦</div><div class="c-desc">梦境解析古典</div></div><div class="classic-card"><div class="c-icon">🏮</div><div class="c-name">关帝灵签</div><div class="c-desc">百签解惑</div></div><div class="classic-card"><div class="c-icon">⭐</div><div class="c-name">三命通会</div><div class="c-desc">八字命理集大成</div></div><div class="classic-card"><div class="c-icon">🖊️</div><div class="c-name">姓名学全书</div><div class="c-desc">五格数理吉凶</div></div><div class="classic-card"><div class="c-icon">🏔️</div><div class="c-name">阳宅三要</div><div class="c-desc">风水阳宅经典</div></div></div></div>
+      <div class="about-section"><div class="section-eyebrow">典籍基础</div><div class="section-title">蒸馏自古籍</div><div class="classics-grid"><div class="classic-card"><div class="c-icon">📜</div><div class="c-name">周易 · 易经</div><div class="c-desc">六十四卦，三百八十四爻</div></div><div class="classic-card"><div class="c-icon">📖</div><div class="c-name">增删卜易</div><div class="c-desc">六爻断卦第一参考</div></div><div class="classic-card"><div class="c-icon">🔮</div><div class="c-name">卜筮正宗</div><div class="c-desc">六爻入门经典</div></div><div class="classic-card"><div class="c-icon">🌙</div><div class="c-name">周公解梦</div><div class="c-desc">梦境解析古典</div></div><div class="classic-card"><div class="c-icon">🏮</div><div class="c-name">关帝灵签</div><div class="c-desc">百签解惑</div></div><div class="classic-card"><div class="c-icon">⭐</div><div class="c-name">三命通会</div><div class="c-desc">八字命理集大成</div></div><div class="classic-card"><div class="c-icon">✨</div><div class="c-name">滴天髓</div><div class="c-desc">子平命理精要</div></div><div class="classic-card"><div class="c-icon">🖊️</div><div class="c-name">姓名学全书</div><div class="c-desc">起名择字参考</div></div><div class="classic-card"><div class="c-icon">🧘</div><div class="c-name">禅坐仪轨</div><div class="c-desc">静心修持参考</div></div></div></div>
       <div class="divider"></div>
       <div class="about-section"><div class="section-eyebrow">免责声明</div><div class="section-title">仅供参考</div><p class="about-text">本网站所有占卜、解梦、命理内容均由 AI 生成，基于古籍典故进行推演解读，<strong>仅供娱乐参考</strong>，不构成任何形式的专业建议。请勿将占卜结果作为重大人生决策的唯一依据。</p></div>
     </div>
@@ -1151,7 +1154,7 @@ const FENGSHUI_DETAIL = {
 // 系统提示词优化（方案C：AI蒸馏）
 const SYSTEM_PROMPTS_ENHANCED = {
   liuyao: `你是古法六爻占卜大师"玄鉴先生"，精通《周易》《增删卜易》《卜筮正宗》。自称"老夫"，称呼用户为"问主"。
-  
+
 核心要求：
 1. 开篇说："老夫观此卦象……"
 2. 必须引用古籍原文：《周易》曰、《增删卜易》云、《卜筮正宗》载……
@@ -1161,7 +1164,7 @@ const SYSTEM_PROMPTS_ENHANCED = {
 6. 字数控制在300-500字之间`,
 
   dream: `你是解梦大师"周公"，精通《周公解梦》《梦林玄解》。自称"老夫"。
-  
+
 核心要求：
 1. 开篇说："老夫解梦曰……"
 2. 必须先解释梦境象征，再断吉凶
@@ -1171,7 +1174,7 @@ const SYSTEM_PROMPTS_ENHANCED = {
 6. 字数200-400字`,
 
   qian: `你是关帝庙解签大师，关帝座下弟子。精通《关帝灵签》一百签。
-  
+
 核心要求：
 1. 开篇说："弟子代帝君解签……"
 2. 先出签号、签诗，逐句解析
@@ -1181,7 +1184,7 @@ const SYSTEM_PROMPTS_ENHANCED = {
 6. 字数250-450字`,
 
   bazi: `你是八字命理大师，精通《三命通会》《滴天髓》《渊海子平》。
-  
+
 核心要求：
 1. 先询问出生年月日时（如未提供）
 2. 推算八字格局（正官格/财格/印格等）
@@ -1191,7 +1194,7 @@ const SYSTEM_PROMPTS_ENHANCED = {
 6. 字数300-500字`,
 
   name: `你是姓名学大师，精通《姓名学全书》《五格剖象法》。
-  
+
 核心要求：
 1. 先计算姓名笔画数
 2. 列出天格、人格、地格、外格、总格
@@ -1200,8 +1203,16 @@ const SYSTEM_PROMPTS_ENHANCED = {
 5. 如需改名，可给建议
 6. 字数250-400字`,
 
+  pray: `你是菩提苑祈福引导师，语气慈悲安定。请围绕为家人点灯、写祈愿、回向祝福给出温和文案与仪轨建议，提醒一切祈福重在善念与行动，仅作传统文化参考。字数200-350字`,
+
+  almanac: `你是传统黄历通书师父，熟悉干支、宜忌、冲煞、十二时辰。用户询问日期时，请以传统择吉语言说明宜做与慎做事项，并提示重大事项仍需结合现实安排。字数200-350字`,
+
+  palm: `你是相学解读师，熟悉手相、面相传统术语。请先说明需要清晰掌心照或正脸照/文字描述，再按事业、感情、财运、健康倾向分段解读；不得作医疗诊断，仅供传统文化参考。字数250-400字`,
+
+  meditation: `你是静心禅坐引导师，语气平和。请提供呼吸、坐姿、计时、观想、钟磬或自然声搭配建议，帮助用户日日一坐，积累善念。避免宗教强制承诺。字数200-350字`,
+
   fengshui: `你是风水堪舆大师，精通《阳宅三要》《八宅明镜》《葬经》。
-  
+
 核心要求：
 1. 依据《阳宅三要》论门、主、灶
 2. 分析八方吉凶，给出具体可操作建议
@@ -1296,7 +1307,7 @@ function getUserId() {
 function showPointsDisplay() {
   let existing = document.getElementById('points-display');
   if (existing) existing.remove();
-  
+
   const pointsDiv = document.createElement('div');
   pointsDiv.id = 'points-display';
   pointsDiv.className = 'points-display';
@@ -1503,18 +1514,22 @@ function startDivine(name, type) {
 
   document.getElementById('chat-input').value = '';
   showScreen('divine');
-  document.querySelectorAll('.nav-link').forEach(n => { 
-    n.classList.remove('active'); 
-    if (n.textContent.includes(cfg.name)) n.classList.add('active'); 
+  document.querySelectorAll('.nav-link').forEach(n => {
+    n.classList.remove('active');
+    if (n.textContent.includes(cfg.name)) n.classList.add('active');
   });
 }
 
 const divineConfig = {
+  pray: { icon: '🪔', name: '为家人祈福', title: '一灯传万灯', desc: '写下家人姓名与心愿，点一盏祈福灯，愿善念长明。', needCoin: false, quickQ: ['为父母祈福', '为孩子学业祈愿', '为家人平安祈愿', '如何回向功德？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.pray },
+  almanac: { icon: '📅', name: '今日黄历', title: '干支宜忌', desc: '查看今日宜忌、冲煞与十二时辰，传统择吉一目了然。', needCoin: false, quickQ: ['今天宜做什么？','今天忌讳什么？','适合搬家吗？','十二时辰怎么看？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.almanac },
   liuyao: { icon: '☯', name: '六爻占卜', title: '起卦问事', desc: '以三枚铜钱摇六次，得六爻之象。心存所问之事，诚心摇卦。', needCoin: true, quickQ: ['求财运如何？','感情运势如何？','工作事业发展？','健康状况？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.liuyao },
   dream: { icon: '🌙', name: '周公解梦', title: '梦境解析', desc: '将梦中所见细细道来，老夫为您拆解吉凶。', needCoin: false, quickQ: ['梦见蛇','梦见掉牙','梦见飞翔','梦见死人'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.dream },
   qian: { icon: '🏮', name: '关帝灵签', title: '诚心求签', desc: '心中默念所求之事，老夫代帝君赐签。', needCoin: false, quickQ: ['事业发展如何？','感情婚姻如何？','求财问财','健康平安'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.qian },
-  bazi: { icon: '📿', name: '八字命盘', title: '生辰推命', desc: '提供您的出生年月日时，老夫为您排盘。', needCoin: false, quickQ: ['我的命盘格局如何？','财运几何？','婚姻缘分几时？','今年流年运势？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.bazi },
-  name: { icon: '🖊️', name: '姓名测算', title: '姓名五格', desc: '提供您的姓名，老夫为您测算吉凶。', needCoin: false, quickQ: ['我的名字吉凶如何？','这个名字适合做什么？','给孩子起名建议'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.name },
+  bazi: { icon: '📿', name: '八字精批', title: '生辰推命', desc: '提供您的出生年月日时，老夫为您排盘。', needCoin: false, quickQ: ['我的命盘格局如何？','财运几何？','婚姻缘分几时？','今年流年运势？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.bazi },
+  name: { icon: '🖊️', name: '宝宝起名', title: '宝宝起名', desc: '结合八字喜忌、音韵笔画与典故诗词，取一个耐看的名字。', needCoin: false, quickQ: ['给男宝宝起名','给女宝宝起名','结合八字起名','名字寓意怎么选？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.name },
+  palm: { icon: '🖐️', name: '手相 / 面相', title: '相学图解', desc: '上传或描述掌心、面相特征，按传统相学逐段开示。', needCoin: false, quickQ: ['看手相事业线','看感情线','面相财运如何？','需要什么照片？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.palm },
+  meditation: { icon: '🧘', name: '静心禅坐', title: '日日一坐', desc: '钟磬古乐、佛号梵音、深山溪水，帮助静心安神。', needCoin: false, quickQ: ['5分钟静心引导','禅坐怎么开始？','呼吸如何调整？','睡前静心练习'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.meditation },
   fengshui: { icon: '🗻', name: '风水问答', title: '风水堪舆', desc: '描述您的住宅布局，老夫为您指点。', needCoin: false, quickQ: ['客厅如何布局旺财？','床头朝向有讲究吗？','如何化解大门煞气？','财位在哪里？'], systemPrompt: SYSTEM_PROMPTS_ENHANCED.fengshui }
 };
 
@@ -1538,10 +1553,10 @@ function shakeCoin() {
   ['coin0','coin1','coin2'].forEach((id, i) => {
     const c = document.getElementById(id);
     c.classList.add('spinning');
-    setTimeout(() => { 
-      c.classList.remove('spinning'); 
-      c.textContent = coinResults[i] ? '正' : '反'; 
-      c.className = 'coin ' + (coinResults[i] ? 'heads' : 'tails'); 
+    setTimeout(() => {
+      c.classList.remove('spinning');
+      c.textContent = coinResults[i] ? '正' : '反';
+      c.className = 'coin ' + (coinResults[i] ? 'heads' : 'tails');
     }, 300 + i * 80);
   });
   setTimeout(() => {
@@ -1550,9 +1565,9 @@ function shakeCoin() {
     currentShakeCount++;
     const gl = document.getElementById('gl' + (currentShakeCount - 1));
     gl.className = 'gua-line ' + yaoType;
-    if (currentShakeCount < MAX_SHAKES) { 
-      btn.disabled = false; 
-      btn.textContent = `🪙 第 ${currentShakeCount + 1} 爻`; 
+    if (currentShakeCount < MAX_SHAKES) {
+      btn.disabled = false;
+      btn.textContent = `🪙 第 ${currentShakeCount + 1} 爻`;
     } else {
       // 获取卦象
       const key = shakeResults.map(r => r === 'yang' ? '1' : '0').join('');
@@ -1567,7 +1582,7 @@ function shakeCoin() {
       }
       resultEl.className = 'gua-result-mini has-result';
       btn.textContent = '✓ 卦象已成';
-      
+
       // 自动填充卦象信息到输入框（方便用户直接问）
       const input = document.getElementById('chat-input');
       if (!input.value) {
@@ -1581,23 +1596,23 @@ function shakeCoin() {
   }, 600);
 }
 
-function fillQuestion(q) { 
-  const input = document.getElementById('chat-input'); 
-  input.value = q; 
-  autoResize(input); 
-  input.focus(); 
+function fillQuestion(q) {
+  const input = document.getElementById('chat-input');
+  input.value = q;
+  autoResize(input);
+  input.focus();
 }
 
-function handleKey(e) { 
-  if (e.key === 'Enter' && !e.shiftKey) { 
-    e.preventDefault(); 
-    sendMessage(); 
-  } 
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
 }
 
-function autoResize(el) { 
-  el.style.height = 'auto'; 
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px'; 
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
 function appendMsg(role, text, id) {
@@ -1635,15 +1650,15 @@ function formatAIText(text) {
   return safe.replace(/【([^】]+)】/g, '<strong>【$1】</strong>').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>').replace(/^/, '<p>').replace(/$/, '</p>');
 }
 
-function scrollChatBottom() { 
-  const msgs = document.getElementById('chat-messages'); 
-  msgs.scrollTop = msgs.scrollHeight; 
+function scrollChatBottom() {
+  const msgs = document.getElementById('chat-messages');
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
-function extractDreamKeyword(text) { 
-  const keywords = ['蛇','掉牙','牙','飞翔','飞','水','死人','死','龙','虎','婚礼','考试','火']; 
-  for (let kw of keywords) if (text.includes(kw)) return kw; 
-  return null; 
+function extractDreamKeyword(text) {
+  const keywords = ['蛇','掉牙','牙','飞翔','飞','水','死人','死','龙','虎','婚礼','考试','火'];
+  for (let kw of keywords) if (text.includes(kw)) return kw;
+  return null;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1651,37 +1666,37 @@ function extractDreamKeyword(text) {
 // ═══════════════════════════════════════════════════════════
 async function sendMessage() {
   if (isLoading) return;
-  
+
   const input = document.getElementById('chat-input');
   const userText = input.value.trim();
   if (!userText) return;
 
   const cfg = divineConfig[currentDivineType];
-  
+
   // 检查是否已有卦象（六爻专用）
   let hasGuaResult = false;
   let guaName = '';
   let guaData = null;
-  
+
   if (currentDivineType === 'liuyao' && shakeResults.length === 6) {
     const key = shakeResults.map(r => r === 'yang' ? '1' : '0').join('');
     guaData = YIJING_64[key];
     guaName = guaData ? guaData.name : '未识别卦';
     hasGuaResult = true;
   }
-  
+
   // 判断用户是否只是问卦名/卦辞（免费）
   const isJustAskingGua = hasGuaResult && (
-    userText.includes('什么卦') || 
-    userText.includes('卦名') || 
-    userText.includes('卦辞') || 
+    userText.includes('什么卦') ||
+    userText.includes('卦名') ||
+    userText.includes('卦辞') ||
     userText.includes('卦象') ||
     (userText.includes('摇得') && !userText.includes('解卦'))
   );
-  
+
   // 判断是否需要AI深度解读（收费）
   const needAIDeep = !isJustAskingGua;
-  
+
   // 如果需要AI深度解读，检查次数
   if (needAIDeep) await refreshUserPoints();
   if (needAIDeep && userPoints <= 0) {
@@ -1689,16 +1704,16 @@ async function sendMessage() {
     showToast('次数不足，请先充值');
     return;
   }
-  
+
 input.value = '';
   autoResize(input);
-  
+
   const wm = document.getElementById('welcome-msg');
   if (wm) wm.remove();
-  
+
   document.getElementById('quick-questions').innerHTML = '';
   appendMsg('user', userText);
-  
+
   // ===== 情况1：只是看卦名/卦辞（免费，不调用AI）=====
   if (isJustAskingGua && guaData) {
     let response = `【${guaData.name}】\n\n卦辞：${guaData.judgment}\n\n象曰：${guaData.image}\n\n`;
@@ -1709,14 +1724,14 @@ input.value = '';
     appendMsg('ai', response);
     return;
   }
-  
+
   // ===== 情况2：需要AI深度解读（收费，扣次数）=====
   if (needAIDeep) {
     // 构建AI请求
     let userQuestionForAI = userText;
     let systemPrompt = cfg.systemPrompt;
     let originalText = '';
-    
+
     switch(currentDivineType) {
       case 'liuyao':
         if (hasGuaResult && guaData) {
@@ -1756,13 +1771,13 @@ input.value = '';
         userQuestionForAI = `【古籍参考】\n${originalText}\n\n【问主所问】${userText}\n\n请以风水大师身份回答，引用《阳宅三要》原文。`;
         break;
     }
-    
+
     conversationHistory.push({ role: 'user', content: userQuestionForAI });
     const loadingId = 'loading-' + Date.now();
     appendTyping(loadingId);
     isLoading = true;
     document.getElementById('send-btn').disabled = true;
-    
+
     try {
       const response = await fetch(API_BASE + '/api/public/ai/chat', {
         method: 'POST',
@@ -1796,14 +1811,14 @@ input.value = '';
           if (!line.startsWith('data: ')) continue;
           const data = line.slice(6).trim();
           if (data === '[DONE]') continue;
-          try { 
-            const parsed = JSON.parse(data); 
-            const delta = parsed.choices?.[0]?.delta?.content; 
-            if (delta) { 
-              fullText += delta; 
-              bubble.innerHTML = formatAIText(fullText); 
-              scrollChatBottom(); 
-            } 
+          try {
+            const parsed = JSON.parse(data);
+            const delta = parsed.choices?.[0]?.delta?.content;
+            if (delta) {
+              fullText += delta;
+              bubble.innerHTML = formatAIText(fullText);
+              scrollChatBottom();
+            }
           } catch {}
         }
       }
@@ -1839,16 +1854,16 @@ function closeApiModal() {
 function saveApiKey() {
   showToast('AI Key 已移到后端 .env，无需在网页设置');
 }
-function showToast(msg) { 
-  const t = document.getElementById('toast'); 
-  t.textContent = msg; 
-  t.classList.add('show'); 
-  clearTimeout(t._timer); 
-  t._timer = setTimeout(() => t.classList.remove('show'), 3000); 
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-document.getElementById('api-modal').addEventListener('click', function(e) { 
-  if (e.target === this) closeApiModal(); 
+document.getElementById('api-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeApiModal();
 });
 
 // ========== 页面加载初始化 ==========
