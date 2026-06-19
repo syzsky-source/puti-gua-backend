@@ -34,9 +34,13 @@ CREATE TABLE IF NOT EXISTS qrcodes (
   account_name VARCHAR(100) NULL,
   image_url VARCHAR(500) NULL,
   remark VARCHAR(255) NULL,
+  product_id VARCHAR(64) NULL,
+  amount DECIMAL(10,2) NULL,
   is_active TINYINT(1) NOT NULL DEFAULT 0,
   created_at DATETIME NOT NULL,
-  updated_at DATETIME NOT NULL
+  updated_at DATETIME NOT NULL,
+  INDEX idx_qrcodes_product_active (product_id, is_active),
+  INDEX idx_qrcodes_amount_active (amount, is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS settings (
@@ -108,9 +112,9 @@ CREATE TABLE IF NOT EXISTS admin_users (
 
 INSERT INTO products (id, name, emoji, price, points_count, description, sort_order, is_active, created_at, updated_at)
 VALUES
-('p_9_10', '10次问卦', '📿', 9.90, 10, '适合初次体验', 1, 1, NOW(), NOW()),
-('p_19_30', '30次问卦', '🔮', 19.90, 30, '常用推荐', 2, 1, NOW(), NOW()),
-('p_49_100', '100次问卦', '🏮', 49.90, 100, '长期使用更划算', 3, 1, NOW(), NOW())
+('p_19_30', '30次问卦', '📿', 19.90, 30, '常用体验套餐', 1, 1, NOW(), NOW()),
+('p_29_50', '50次问卦', '🔮', 29.90, 50, '进阶常用套餐', 2, 1, NOW(), NOW()),
+('p_69_150', '150次问卦', '🏮', 69.90, 150, '长期使用套餐', 3, 1, NOW(), NOW())
 ON DUPLICATE KEY UPDATE
 name = VALUES(name), emoji = VALUES(emoji), price = VALUES(price), points_count = VALUES(points_count),
 description = VALUES(description), sort_order = VALUES(sort_order), is_active = VALUES(is_active), updated_at = NOW();
@@ -122,6 +126,8 @@ VALUES
 ('site_name', '菩提卦馆', '网站名称', NOW(), NOW())
 ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), remark = VALUES(remark), updated_at = NOW();
 
-INSERT INTO qrcodes (name, account_name, image_url, remark, is_active, created_at, updated_at)
-SELECT '默认收款码', '菩提卦馆', '', '请在后台或数据库中把 image_url 改成你的收款码图片地址', 1, NOW(), NOW()
-WHERE NOT EXISTS (SELECT 1 FROM qrcodes WHERE is_active = 1);
+INSERT INTO qrcodes (name, account_name, image_url, remark, product_id, amount, is_active, created_at, updated_at)
+VALUES
+('19.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_19_90.jpg', '自动匹配19.90套餐', 'p_19_30', 19.90, 1, NOW(), NOW()),
+('29.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_29_90.jpg', '自动匹配29.90套餐', 'p_29_50', 29.90, 1, NOW(), NOW()),
+('69.90套餐收款码', '菩提卦馆', 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_69_90.jpg', '自动匹配69.90套餐', 'p_69_150', 69.90, 1, NOW(), NOW());

@@ -18,19 +18,33 @@ async function getSettings(req, res, next) {
 async function getProducts(req, res, next) {
   try {
     const rows = await query(
-      `SELECT id, name, emoji, price, points_count, description
-       FROM products
-       WHERE is_active = 1
-       ORDER BY sort_order ASC, price ASC`
+      `SELECT p.id, p.name, p.emoji, p.price, p.points_count, p.description,
+              q.id AS qrcode_id, q.image_url AS qrcode_image_url
+       FROM products p
+       LEFT JOIN qrcodes q ON q.product_id = p.id AND q.is_active = 1
+       WHERE p.is_active = 1
+       ORDER BY p.sort_order ASC, p.price ASC`
     );
     return ok(res, rows);
   } catch (err) { next(err); }
 }
 
+async function findQrCodeForProduct(productId) {
+  return getOne(
+    `SELECT id, product_id, amount, name, account_name, image_url, remark
+     FROM qrcodes
+     WHERE is_active = 1 AND (product_id = ? OR product_id IS NULL OR product_id = '')
+     ORDER BY CASE WHEN product_id = ? THEN 0 ELSE 1 END, updated_at DESC, id DESC
+     LIMIT 1`,
+    [productId, productId]
+  );
+}
+
 async function getActiveQrCode(req, res, next) {
   try {
-    const row = await getOne(
-      `SELECT id, name, account_name, image_url, remark
+    const productId = req.query.product_id || req.query.productId || null;
+    const row = productId ? await findQrCodeForProduct(productId) : await getOne(
+      `SELECT id, product_id, amount, name, account_name, image_url, remark
        FROM qrcodes
        WHERE is_active = 1
        ORDER BY updated_at DESC, id DESC
@@ -54,7 +68,7 @@ async function getUser(req, res, next) {
 
 async function createOrder(req, res, next) {
   try {
-    const userId = req.body.user_id;
+    const userId = String(req.body.user_id || '').trim();
     const productId = req.body.product_id;
     if (!userId || !productId) return fail(res, 400, 'user_id 和 product_id 必填', 400);
 
@@ -71,6 +85,7 @@ async function createOrder(req, res, next) {
     );
 
     const order = await getOne('SELECT * FROM orders WHERE id = ?', [id]);
+    const qrcode = await findQrCodeForProduct(product.id);
     return ok(res, {
       id: order.id,
       user_id: order.user_id,
@@ -78,6 +93,7 @@ async function createOrder(req, res, next) {
       amount: order.amount,
       points_count: order.points_count,
       status: order.status,
+      qrcode,
       created_at: order.created_at
     });
   } catch (err) { next(err); }

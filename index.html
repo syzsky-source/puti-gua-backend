@@ -1326,6 +1326,8 @@ async function showPayModal() {
     <div class="pay-modal-box">
       <div class="pay-modal-title">📿 购买次数</div>
       <div class="pay-modal-sub">付款后上传截图，后台确认后自动增加次数</div>
+      <div class="pay-contact" style="cursor:default">当前客户ID：<span id="pay-user-id"></span></div>
+      <div style="display:flex;gap:8px;margin:8px 0 12px;"><button class="pay-option" style="margin:0;flex:1" onclick="copyUserId()">复制客户ID</button><button class="pay-option" style="margin:0;flex:1" onclick="resetUserId()">生成新客户ID</button></div>
       <div id="pay-product-list"><button class="pay-option" disabled>正在加载套餐...</button></div>
       <div class="pay-qr" id="pay-qr-area" style="display:none;">
         <img id="pay-qr-img" src="" alt="收款码" style="width:200px;height:200px;display:none;">
@@ -1343,8 +1345,10 @@ async function showPayModal() {
   document.body.appendChild(modal);
 
   const list = document.getElementById('pay-product-list');
+  const userIdEl = document.getElementById('pay-user-id');
+  if (userIdEl) userIdEl.textContent = getUserId();
   try {
-    if (!payProducts.length || !activeQrCode) await loadPublicSiteData();
+    if (!payProducts.length) await loadPublicSiteData();
     list.replaceChildren();
     if (!payProducts.length) {
       list.innerHTML = '<button class="pay-option" disabled>后台还没有配置商品</button>';
@@ -1378,10 +1382,11 @@ async function selectPay(productId) {
     const qrText = document.getElementById('pay-qr-text');
     const orderInfo = document.getElementById('pay-order-info');
     const proofArea = document.getElementById('pay-proof-area');
-    if (activeQrCode?.image_url) {
-      qrImg.src = activeQrCode.image_url;
+    const orderQrCode = activeOrder.qrcode || activeQrCode;
+    if (orderQrCode?.image_url) {
+      qrImg.src = orderQrCode.image_url;
       qrImg.style.display = 'inline-block';
-      qrText.textContent = `请支付 ¥${Number(activeOrder.amount || 0).toFixed(2)} 给 ${activeQrCode.account_name || activeQrCode.name || '收款账户'}`;
+      qrText.textContent = `请支付 ¥${Number(activeOrder.amount || 0).toFixed(2)} 给 ${orderQrCode.account_name || orderQrCode.name || '收款账户'}`;
     } else {
       qrText.textContent = '后台还没有设置当前收款码，请联系管理员';
     }
@@ -1413,6 +1418,22 @@ function copyContact() {
   const contact = siteSettings.customer_wechat || 'puti_gua';
   navigator.clipboard.writeText(contact);
   showToast('客服微信号已复制');
+}
+
+function copyUserId() {
+  navigator.clipboard.writeText(getUserId());
+  showToast('客户ID已复制');
+}
+
+async function resetUserId() {
+  if (!confirm('确认生成新客户ID？新ID将与当前剩余次数和订单分开，请仅在测试新客户时使用。')) return;
+  const uid = createLocalUserId();
+  localStorage.setItem('puti_user_id', uid);
+  activeOrder = null;
+  const userIdEl = document.getElementById('pay-user-id');
+  if (userIdEl) userIdEl.textContent = uid;
+  await refreshUserPoints();
+  showToast('已生成新客户ID');
 }
 
 // ═══════════════════════════════════════════════════════════

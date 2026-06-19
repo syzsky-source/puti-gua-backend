@@ -21,6 +21,11 @@ function money(value) {
   return Number(value || 0);
 }
 
+function normalizeNullableText(value) {
+  const text = String(value ?? '').trim();
+  return text || null;
+}
+
 async function getUserColumns() {
   const rows = await query('SHOW COLUMNS FROM users');
   return new Set(rows.map(row => row.Field));
@@ -98,14 +103,18 @@ async function getDashboard(req, res, next) {
 async function listOrders(req, res, next) {
   try {
     const status = req.query.status;
+    const productId = req.query.product_id || req.query.productId;
+    const userId = req.query.user_id || req.query.userId;
+    const keyword = String(req.query.keyword || req.query.q || '').trim();
+    const clauses = [];
     const params = [];
-    let where = '';
-    if (status) {
-      where = 'WHERE o.status = ?';
-      params.push(status);
-    }
+    if (status) { clauses.push('o.status = ?'); params.push(status); }
+    if (productId) { clauses.push('o.product_id = ?'); params.push(productId); }
+    if (userId) { clauses.push('o.user_id = ?'); params.push(userId); }
+    if (keyword) { clauses.push('(o.id LIKE ? OR o.user_id LIKE ? OR o.product_id LIKE ? OR p.name LIKE ?)'); const like = `%${escapeLike(keyword)}%`; params.push(like, like, like, like); }
+    const where = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
     const rows = await query(
-      `SELECT o.*, p.name AS product_name
+      `SELECT o.*, p.name AS product_name, p.price AS product_price
        FROM orders o
        LEFT JOIN products p ON p.id = o.product_id
        ${where}
@@ -248,7 +257,7 @@ async function getUserDetail(req, res, next) {
     );
 
     const recentOrders = await query(
-      `SELECT o.*, p.name AS product_name
+      `SELECT o.*, p.name AS product_name, p.price AS product_price
        FROM orders o
        LEFT JOIN products p ON p.id = o.product_id
        WHERE o.user_id = ?
@@ -276,7 +285,7 @@ async function listUserOrders(req, res, next) {
     const countRows = await query(`SELECT COUNT(*) AS total FROM orders o ${where}`, params);
     const total = Number(countRows[0]?.total || 0);
     const rows = await query(
-      `SELECT o.*, p.name AS product_name
+      `SELECT o.*, p.name AS product_name, p.price AS product_price
        FROM orders o
        LEFT JOIN products p ON p.id = o.product_id
        ${where}
@@ -369,7 +378,7 @@ async function saveProduct(req, res, next) {
 
 async function listQrCodes(req, res, next) {
   try {
-    const rows = await query('SELECT * FROM qrcodes ORDER BY is_active DESC, updated_at DESC, id DESC');
+    const rows = await query(`SELECT q.*, p.name AS product_name FROM qrcodes q LEFT JOIN products p ON p.id = q.product_id ORDER BY q.is_active DESC, q.product_id IS NULL ASC, q.amount ASC, q.updated_at DESC, q.id DESC`);
     return ok(res, rows);
   } catch (err) { next(err); }
 }
@@ -381,18 +390,23 @@ async function saveQrCode(req, res, next) {
     const accountName = req.body.account_name || req.body.accountName || '';
     const imageUrl = req.body.image_url || req.body.imageUrl || '';
     const remark = req.body.remark || '';
+    const productId = normalizeNullableText(req.body.product_id ?? req.body.productId);
+    const amount = req.body.amount == null || req.body.amount === '' ? null : Number(req.body.amount);
     const isActive = Number(req.body.is_active ?? req.body.isActive ?? 0) ? 1 : 0;
 
+    if (productId) {
+      const product = await getOne('SELECT id, price FROM products WHERE id = ?', [productId]);
+      if (!product) return fail(res, 400, '绑定套餐不存在', 400);
+    }
+
     if (id) {
-      await query('UPDATE qrcodes SET name = ?, account_name = ?, image_url = ?, remark = ?, is_active = ?, updated_at = NOW() WHERE id = ?', [name, accountName, imageUrl, remark, isActive, id]);
-      if (isActive) await query('UPDATE qrcodes SET is_active = 0, updated_at = NOW() WHERE id <> ?', [id]);
+      await query('UPDATE qrcodes SET name = ?, account_name = ?, image_url = ?, remark = ?, product_id = ?, amount = ?, is_active = ?, updated_at = NOW() WHERE id = ?', [name, accountName, imageUrl, remark, productId, amount, isActive, id]);
       return ok(res, await getOne('SELECT * FROM qrcodes WHERE id = ?', [id]));
     }
 
-    if (isActive) await query('UPDATE qrcodes SET is_active = 0, updated_at = NOW()');
     const result = await query(
-      'INSERT INTO qrcodes (name, account_name, image_url, remark, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, NOW(), NOW())',
-      [name, accountName, imageUrl, remark, isActive]
+      'INSERT INTO qrcodes (name, account_name, image_url, remark, product_id, amount, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())',
+      [name, accountName, imageUrl, remark, productId, amount, isActive]
     );
     return ok(res, await getOne('SELECT * FROM qrcodes WHERE id = ?', [result.insertId]));
   } catch (err) { next(err); }
@@ -403,7 +417,6 @@ async function activateQrCode(req, res, next) {
     const id = req.params.qrcodeId;
     const row = await getOne('SELECT * FROM qrcodes WHERE id = ?', [id]);
     if (!row) return fail(res, 404, '收款码不存在', 404);
-    await query('UPDATE qrcodes SET is_active = 0, updated_at = NOW()');
     await query('UPDATE qrcodes SET is_active = 1, updated_at = NOW() WHERE id = ?', [id]);
     return ok(res, await getOne('SELECT * FROM qrcodes WHERE id = ?', [id]));
   } catch (err) { next(err); }
