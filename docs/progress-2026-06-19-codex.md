@@ -40,8 +40,8 @@
 
 重要风险：
 
-- PR #3 的说明中提到把站点名称改成了“菩提苑”。这与用户已确定的项目名「菩提卦馆」冲突。
-- 下一步必须先检查 `index.html`、`puti-gua.html`、`admin.html` 是否出现“菩提苑”，并统一改回“菩提卦馆”。
+- PR #3 的说明中提到把站点名称改成了一个错误品牌名。这与用户已确定的项目名「菩提卦馆」冲突。
+- 下一步必须先检查 `index.html`、`puti-gua.html`、`admin.html` 是否出现错误品牌名，并统一改回“菩提卦馆”。
 - 不要直接上线前台，先本地/服务器预览确认品牌名和页面没有被改坏。
 
 ## 尚未完成 / 晚上继续事项
@@ -51,9 +51,9 @@
    - 查看最新 commit 列表。
 
 2. 检查品牌名：
-   - 全仓库搜索“菩提苑”。
+   - 全仓库搜索错误品牌名。
    - 所有对外展示处应统一为“菩提卦馆”。
-   - 参考站点只作结构参考，不应改成“菩提苑”。
+   - 参考站点只作结构参考，不应改成其他品牌名。
 
 3. 检查数据库迁移：
    - 找到 Codex 新增的 migration。
@@ -120,7 +120,7 @@ mysql -u root -p puti_gua < database/migrations/对应文件.sql
 cd /var/www/puti-gua-backend
 git log --oneline -8
 git status
-grep -R "菩提苑" -n index.html puti-gua.html admin.html src docs || true
+rg -n "错误品牌名" index.html puti-gua.html admin.html src docs || true
 grep -R "product_id\|amount" -n database/migrations src/controllers admin.html || true
 ```
 
