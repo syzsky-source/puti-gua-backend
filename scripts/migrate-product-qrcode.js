@@ -1,6 +1,7 @@
 /*
- * 安全迁移：为收款码增加套餐绑定，并写入 19.90 / 29.90 / 69.90 套餐与二维码。
- * 可重复执行：已存在的字段、索引、套餐和套餐二维码会被跳过或更新，不会重复新增。
+ * 安全迁移：规范三档套餐并绑定对应收款码。
+ * 正确套餐：10次 / 19.90，30次 / 29.90，100次 / 69.90。
+ * 可重复执行：字段、索引、套餐和套餐二维码均会按需新增或更新。
  * 执行：node scripts/migrate-product-qrcode.js
  */
 
@@ -17,40 +18,40 @@ const db = {
 
 const packageRows = [
   {
-    id: 'p_19_30',
-    name: '30次问卦',
+    id: 'p_9_10',
+    name: '10次问卦',
     emoji: '📿',
     price: 19.90,
-    points: 30,
-    description: '常用体验套餐',
+    points: 10,
+    description: '入门体验套餐',
     sortOrder: 1,
     imageUrl: 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_19_90.jpg',
     qrName: '19.90套餐收款码',
-    qrRemark: '自动匹配19.90套餐'
+    qrRemark: '自动匹配10次问卦套餐'
   },
   {
-    id: 'p_29_50',
-    name: '50次问卦',
+    id: 'p_19_30',
+    name: '30次问卦',
     emoji: '🔮',
     price: 29.90,
-    points: 50,
-    description: '进阶常用套餐',
+    points: 30,
+    description: '常用体验套餐',
     sortOrder: 2,
     imageUrl: 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_29_90.jpg',
     qrName: '29.90套餐收款码',
-    qrRemark: '自动匹配29.90套餐'
+    qrRemark: '自动匹配30次问卦套餐'
   },
   {
-    id: 'p_69_150',
-    name: '150次问卦',
+    id: 'p_49_100',
+    name: '100次问卦',
     emoji: '🏮',
     price: 69.90,
-    points: 150,
+    points: 100,
     description: '长期使用套餐',
     sortOrder: 3,
     imageUrl: 'https://api.putiguaguan.fun/uploads/qrcodes/qrcode_69_90.jpg',
     qrName: '69.90套餐收款码',
-    qrRemark: '自动匹配69.90套餐'
+    qrRemark: '自动匹配100次问卦套餐'
   }
 ];
 
@@ -102,7 +103,33 @@ async function ensureQrSchema(connection) {
   }
 }
 
+async function findReusableQrCode(connection, item) {
+  const [rows] = await connection.query(
+    `SELECT id
+     FROM qrcodes
+     WHERE product_id = ? OR image_url = ?
+     ORDER BY CASE WHEN product_id = ? THEN 0 WHEN image_url = ? THEN 1 ELSE 2 END, id ASC
+     LIMIT 1`,
+    [item.id, item.imageUrl, item.id, item.imageUrl]
+  );
+  return rows[0] || null;
+}
+
 async function seedPackagesAndQrCodes(connection) {
+  const canonicalIds = packageRows.map(item => item.id);
+  const placeholders = canonicalIds.map(() => '?').join(', ');
+
+  // 只保留正确的三档套餐为上架状态，历史订单不会受影响。
+  const [deactivatedProducts] = await connection.query(
+    `UPDATE products SET is_active = 0, updated_at = NOW()
+     WHERE id NOT IN (${placeholders}) AND is_active <> 0`,
+    canonicalIds
+  );
+  console.log(`已下架非标准套餐：${deactivatedProducts.affectedRows} 条`);
+
+  // 先停用旧套餐绑定的二维码，随后只启用这三张正确二维码。
+  await connection.query('UPDATE qrcodes SET is_active = 0, updated_at = NOW() WHERE product_id IS NOT NULL');
+
   for (const item of packageRows) {
     await connection.query(
       `INSERT INTO products
@@ -115,19 +142,17 @@ async function seedPackagesAndQrCodes(connection) {
       [item.id, item.name, item.emoji, item.price, item.points, item.description, item.sortOrder]
     );
 
-    const [qrRows] = await connection.query(
-      'SELECT id FROM qrcodes WHERE product_id = ? ORDER BY id ASC LIMIT 1',
-      [item.id]
-    );
-
-    if (qrRows.length) {
+    const reusable = await findReusableQrCode(connection, item);
+    if (reusable) {
       await connection.query(
         `UPDATE qrcodes
-         SET name = ?, account_name = '菩提卦馆', image_url = ?, remark = ?, amount = ?, is_active = 1, updated_at = NOW()
+         SET name = ?, account_name = '菩提卦馆', image_url = ?, remark = ?,
+             product_id = ?, amount = ?, is_active = 1, updated_at = NOW()
          WHERE id = ?`,
-        [item.qrName, item.imageUrl, item.qrRemark, item.price, qrRows[0].id]
+        [item.qrName, item.imageUrl, item.qrRemark, item.id, item.price, reusable.id]
       );
-      console.log(`已更新 ${item.price.toFixed(2)} 元套餐与收款码`);
+      await connection.query('UPDATE qrcodes SET is_active = 0 WHERE product_id = ? AND id <> ?', [item.id, reusable.id]);
+      console.log(`已更新 ${item.name} / ¥${item.price.toFixed(2)} 对应收款码`);
     } else {
       await connection.query(
         `INSERT INTO qrcodes
@@ -135,7 +160,7 @@ async function seedPackagesAndQrCodes(connection) {
          VALUES (?, '菩提卦馆', ?, ?, ?, ?, 1, NOW(), NOW())`,
         [item.qrName, item.imageUrl, item.qrRemark, item.id, item.price]
       );
-      console.log(`已新增 ${item.price.toFixed(2)} 元套餐收款码`);
+      console.log(`已新增 ${item.name} / ¥${item.price.toFixed(2)} 对应收款码`);
     }
   }
 }
