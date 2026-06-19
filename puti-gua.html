@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>菩提苑 · 为家人祈福求灵签</title>
+<title>菩提卦馆 · 为家人祈福求灵签</title>
 <style>
 /* ========== 完整样式（与你原版一致） ========== */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap');
@@ -901,7 +901,7 @@ main {
 <header>
   <div class="header-logo" onclick="showScreen('home')">
     <div class="logo-seal">☯</div>
-    <h1>菩提苑</h1>
+    <h1>菩提卦馆</h1>
   </div>
   <nav class="main-nav">
     <span class="nav-link active" onclick="showScreen('home')">首页</span>
@@ -928,7 +928,7 @@ main {
         <div class="gua-symbols" id="gua-symbols"></div>
       </div>
       <p class="hero-eyebrow">以古籍为根 · 以师父为引</p>
-      <h2 class="hero-title"><span class="gold-char">菩</span>提<span class="gold-char">苑</span></h2>
+      <h2 class="hero-title"><span class="gold-char">菩</span>提卦<span class="gold-char">馆</span></h2>
       <p class="hero-subtitle">为家人祈福 · 求灵签 · 看八字</p>
       <div class="gua-grid">
         <div class="gua-card" onclick="startDivine('为家人祈福','pray')"><span class="gua-card-icon">🪔</span><div class="gua-card-name">为家人祈福</div><div class="gua-card-desc">点一盏灯，挂家人姓名</div><span class="gua-card-tag">9.9元起</span></div>
@@ -967,7 +967,7 @@ main {
   <!-- ══ 关于页 ══ -->
   <div id="screen-about" class="screen">
     <div class="about-wrap">
-      <div class="about-section"><div class="section-eyebrow">关于菩提苑</div><div class="section-title">古籍为根，师父开示</div><p class="about-text">菩提苑参考站点产品结构，围绕<strong>为家人祈福、今日黄历、周公解梦、关帝灵签、八字精批、六爻占卜、手相 / 面相、宝宝起名、静心禅坐</strong>九大善门组织服务。<br><br>内容以《周易》《关帝灵签》《周公解梦》《渊海子平》《三命通会》《滴天髓》等传统典籍为根，借助 DeepSeek 大模型生成师父式开示，帮助用户以现代对话方式理解传统文化。</p></div>
+      <div class="about-section"><div class="section-eyebrow">关于菩提卦馆</div><div class="section-title">古籍为根，师父开示</div><p class="about-text">菩提卦馆参考站点产品结构，围绕<strong>为家人祈福、今日黄历、周公解梦、关帝灵签、八字精批、六爻占卜、手相 / 面相、宝宝起名、静心禅坐</strong>九大善门组织服务。<br><br>内容以《周易》《关帝灵签》《周公解梦》《渊海子平》《三命通会》《滴天髓》等传统典籍为根，借助 DeepSeek 大模型生成师父式开示，帮助用户以现代对话方式理解传统文化。</p></div>
       <div class="divider"></div>
       <div class="about-section"><div class="section-eyebrow">典籍基础</div><div class="section-title">蒸馏自古籍</div><div class="classics-grid"><div class="classic-card"><div class="c-icon">📜</div><div class="c-name">周易 · 易经</div><div class="c-desc">六十四卦，三百八十四爻</div></div><div class="classic-card"><div class="c-icon">📖</div><div class="c-name">增删卜易</div><div class="c-desc">六爻断卦第一参考</div></div><div class="classic-card"><div class="c-icon">🔮</div><div class="c-name">卜筮正宗</div><div class="c-desc">六爻入门经典</div></div><div class="classic-card"><div class="c-icon">🌙</div><div class="c-name">周公解梦</div><div class="c-desc">梦境解析古典</div></div><div class="classic-card"><div class="c-icon">🏮</div><div class="c-name">关帝灵签</div><div class="c-desc">百签解惑</div></div><div class="classic-card"><div class="c-icon">⭐</div><div class="c-name">三命通会</div><div class="c-desc">八字命理集大成</div></div><div class="classic-card"><div class="c-icon">✨</div><div class="c-name">滴天髓</div><div class="c-desc">子平命理精要</div></div><div class="classic-card"><div class="c-icon">🖊️</div><div class="c-name">姓名学全书</div><div class="c-desc">起名择字参考</div></div><div class="classic-card"><div class="c-icon">🧘</div><div class="c-name">禅坐仪轨</div><div class="c-desc">静心修持参考</div></div></div></div>
       <div class="divider"></div>
@@ -1203,7 +1203,7 @@ const SYSTEM_PROMPTS_ENHANCED = {
 5. 如需改名，可给建议
 6. 字数250-400字`,
 
-  pray: `你是菩提苑祈福引导师，语气慈悲安定。请围绕为家人点灯、写祈愿、回向祝福给出温和文案与仪轨建议，提醒一切祈福重在善念与行动，仅作传统文化参考。字数200-350字`,
+  pray: `你是菩提卦馆祈福引导师，语气慈悲安定。请围绕为家人点灯、写祈愿、回向祝福给出温和文案与仪轨建议，提醒一切祈福重在善念与行动，仅作传统文化参考。字数200-350字`,
 
   almanac: `你是传统黄历通书师父，熟悉干支、宜忌、冲煞、十二时辰。用户询问日期时，请以传统择吉语言说明宜做与慎做事项，并提示重大事项仍需结合现实安排。字数200-350字`,
 
